@@ -1,0 +1,28 @@
+.DialogoContainer{
+  z-index: 2;
+  margin: 5px auto 5px 0px;
+  border-radius: 5px;
+  background-color: #66C6FF;
+  padding: 10px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+
+.DialogoContainer:before   {
+  z-index: 1;
+  content: "";
+  transform: rotate(-45deg) skew(10deg, 10deg);
+  height: 20px;
+  background-color:  #66C6FF;
+  position: absolute;
+  width: 20px;
+  top: 3px;
+  left: -8px;
+}
+.DialogoTitulo,
+.DialogoCuerpo {
+  z-index: 2;
+}

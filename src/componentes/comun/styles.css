@@ -1,0 +1,174 @@
+@import './css/Buscando.css';
+
+.Boton{
+  min-width: 80px;
+  text-align: center;
+  background-color: aqua;
+  border-radius: 7px;
+  cursor: pointer;
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 18px;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+.Boton:hover{
+  -webkit-filter: brightness(95%);
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  -ms-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.Header{
+  display: flex;
+  flex-direction: row; 
+  width: calc(100% - 40px);
+  padding: 0 20px;
+  height: 110px;
+  background-color: hsl(0, 1%, 21%);
+}
+.Titulo{
+  font-size: 28px;
+  margin: auto 0;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  text-decoration: none;
+  color:black;
+}
+.Opciones{
+  margin: auto 0;
+  margin-left: 30px;
+  flex:1;
+}
+.Opcion{
+  text-decoration: none;
+  color: white;
+  margin: 0px 10px;
+  padding: 15px 18px;
+  border-radius: 10px;
+  font-size: 0.8em;
+  background-color: #4e8baf;
+}
+.Header .Seleccionada{
+  background-color: #044f7a;
+}
+.Opcion:hover{
+  -webkit-filter: brightness(95%);
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  -ms-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}.Formulario{
+  display: flex;
+  flex-direction:column;
+}
+.Linea{
+  display: flex;
+  flex-direction:row;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 5px 0;
+  flex: 1;
+  flex-wrap: wrap;
+}
+.Linea .Dato{
+  width: 100%;
+  margin: 5px;
+}
+.Linea .Boton{
+  margin: 10px 10px;
+}
+.Index{
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+.Tarjeta{
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  min-width: 200px;
+  min-height: 115px;
+  padding: 50px 30px;
+  background-color: rgb(200, 222, 243);
+  margin: 20px;
+  color: #242424;
+  font-size: 20px;
+  border-radius: 10px;
+  align-items: center;
+  text-align: center;
+}
+.Tarjeta:hover{
+  color:#242424;
+  background-color: rgb(201, 200, 243);
+}
+
+.Tarjeta .Icono{
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+.Validado{
+  margin: 10px 30px;
+  width: calc(100% - 120px);
+  background-color: lightgrey;
+  border-radius: 10px;
+  padding: 20px 30px;
+  text-align: center;
+  font-weight: bolder;
+  font-size: 20px;
+}
+
+.Row{
+  display: flex;
+  width: 80%;
+}
+
+.Botonera{
+  display:flex;
+  flex-direction:'row';
+  margin: '15px 0px';
+  place-content:'space-evenly'
+}
+
+.Listado{
+  background-color:rgb(203, 231, 255);
+  border-radius:10px;
+  width:90%;
+  margin:10px;
+
+  display:flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+.Detalles{
+  width: 100%;
+  display:flex;
+  flex-direction: row;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+}
+.Acciones{
+  display: flex;
+  flex-direction: row;
+  right: 5px;
+  align-items: center;
+}
+.Preguntas{
+  padding:auto;
+  font-size: 14px;
+  margin-left: 5px;
+  display: flex;
+  flex-direction: column;
+}

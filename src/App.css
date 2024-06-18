@@ -1,0 +1,11 @@
+#root{
+  display: flex;
+  flex:1;
+}
+
+.App{
+  display: flex;
+  flex-direction: column;
+  flex:1;
+  background-color: aliceblue;
+}

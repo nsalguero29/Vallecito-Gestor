@@ -1,0 +1,70 @@
+.Header{
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  height: 90px;
+  width: calc(100% - 10px);
+  padding: 20px 0 0 10px;
+  background: rgba(19,19,19,0.75);
+  background: -moz-linear-gradient(top, rgba(19,19,19,0.75) 0%, rgba(0,0,0,0) 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(19,19,19,0.75)), color-stop(100%, rgba(0,0,0,0)));
+  background: -webkit-linear-gradient(top, rgba(19,19,19,0.75) 0%, rgba(0,0,0,0) 100%);
+  background: -o-linear-gradient(top, rgba(19,19,19,0.75) 0%, rgba(0,0,0,0) 100%);
+  background: -ms-linear-gradient(top, rgba(19,19,19,0.75) 0%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(to bottom, rgba(19,19,19,0.75) 0%, rgba(0,0,0,0) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#131313', endColorstr='#000000', GradientType=0 );
+}
+.Header .Logo {
+
+}
+.Header .Container {
+  display: flex;
+  flex-direction: row;
+  height: 70px;
+  width: 100%;
+  align-items: center;
+  position: relative;
+}
+.Header .Titulo {
+  line-height:24px;
+  padding-right: 10px;
+  margin-right: 0px;
+}
+.Header .Main{
+  display: flex;
+  flex-direction: row;
+  margin: 10px;
+  margin-right: 80px;
+  align-items: center;
+}
+.Header .Opcion{
+  font-size: 18px;
+  text-align: center;
+  color:white;
+  text-decoration: none;
+  margin: 0 10px;
+  padding:0px;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently */
+}
+.Header .Derecha{
+  position: absolute;
+  right: 5px;
+}
+.Accion{
+  padding:2px 4px;
+  font-size: 15px;
+  color:black;
+  border-radius: 5px;
+  cursor: pointer;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently */
+}
