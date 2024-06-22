@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Bicicletas, Index, Login, Logout, Clientes, Proveedores } from './componentes/Main';
+import { Bicicletas, Index, Login, Logout, Clientes, Marcas, Proveedores } from './componentes/Main';
 import { Header } from './componentes/comun/Main';
 import './App.css'
 import useEnv from './useEnv';
@@ -19,6 +19,7 @@ function App() {
       <div className='App'>
         <Header logged={logged}/>
         <Routes>
+          <Route path="/marcas" element={<Marcas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
           <Route path="/proveedores" element={<Proveedores logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
           <Route path="/bicicletas" element={<Bicicletas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
           <Route path="/clientes" element={<Clientes logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 

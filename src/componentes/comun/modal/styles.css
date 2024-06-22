@@ -1,0 +1,49 @@
+.ModalContenedor{
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    min-height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+.ModalContenedor .Contenido{
+    display: flex;
+    min-width: 70%;
+    background-color:whitesmoke;
+    border-radius: 15px;
+    padding: 20px 25px;
+    margin: 10px;
+    flex-direction: column;
+    z-index: 3;
+}
+.ModalContenedor .Titulo{
+    display: flex;
+    position: relative;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.ModalContenedor .Salir{
+    padding: 5px 12px;
+    border-radius: 5px;
+    background-color: red;
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+    top: 0;
+}
+.ModalContenedor h3{
+    margin: 0;
+}
+.ModalContenedor .Cuerpo{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
