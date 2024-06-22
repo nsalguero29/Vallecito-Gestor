@@ -17,6 +17,8 @@ export default function Index ({BASE_URL}){
   const [actualizarLista, setActualizarLista] = useState(true);
   const [modalNuevaMarca, setModalNuevaMarca] = useState(false);
 
+  const [expandir, setExpandir] = useState();
+
   const [busqueda, setBusqueda] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
@@ -95,31 +97,25 @@ export default function Index ({BASE_URL}){
   
 
   return(
-    <>   
     <div className='' style={{display:'flex', flexDirection:'row'}}>
-      <div className='Formulario' style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
-        {modalNuevaMarca && 
-          <ModalNuevaMarca
-            titulo="Nueva Marca"
-            nombreMarca={nombreMarca}
-            setNombreMarca= {(nombreMarca)=>setNombreMarca(nombreMarca)}
-            guardarMarca={()=>guardarMarca()}
-            salir={() => setModalNuevaMarca(false)}
-          />
-        }
-         
-        <div className="Row">
-          <div style={{flex:1}}>
-            <center><h2>LISTADO DE MARCAS</h2></center>
-          </div>
-        </div>
-        <div className='Botonera'>
-          <Button variant="contained" className='Boton' onClick={() => { setModalNuevaMarca(true) }}>Nueva Marca</Button>
+      {modalNuevaMarca && 
+        <ModalNuevaMarca
+          titulo="Nueva Marca"
+          nombreMarca={nombreMarca}
+          setNombreMarca= {(nombreMarca)=>setNombreMarca(nombreMarca)}
+          guardarMarca={()=>guardarMarca()}
+          salir={() => setModalNuevaMarca(false)}
+        />
+      }
+      <div style={{display:'flex', flex:1, flexDirection:'column'}}>
+        <div style={{display:'flex', flex:1, placeContent:'center'}}>
+            <h2>LISTADO DE MARCAS</h2>          
         </div>
         <div className="Row">
-          <div style={{display:'flex', flex:1, placeItems:'center'}}>
+          <div style={{display:'flex', flex:1, placeItems:'center', marginLeft:10}}>
+            Marca: 
             <TextField
-              style={{ flex: 1, margin:10 }}
+              style={{ margin:10, width:350}}
               className='Dato'
               label="Buscar Marca"
               variant="outlined"
@@ -127,8 +123,13 @@ export default function Index ({BASE_URL}){
               onChange={(e) => {setBusqueda(e.target.value); setActualizarLista(true);}}
             />
           </div>
-        </div>        
-        <div className='Listado'>
+          <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
+            <Button variant="contained" className='Boton' onClick={() => { setModalNuevaMarca(true) }}>Nueva Marca</Button>
+          </div>   
+          <div style={{display:'flex', flex:1}}>
+          </div>        
+        </div>       
+        <div className='Listado' style={{display:'flex', flex:1, width:'99%'}}>
           {marcas.length !== 0 ?
             marcas.map((marca, index)=>{
               const productos = marca.productos;
@@ -141,24 +142,22 @@ export default function Index ({BASE_URL}){
                         <div style={{display:'flex', flex:1, 
                         flexDirection:'row', width:'100%'}}>
                           <div style={{flex:2}}>
-                          <strong> Marca: </strong> {marca.marca}
+                            <strong> Marca: </strong> {marca.marca} - <strong>Productos ({productos.length}) </strong>
                           </div>
-                        </div>
-                      </div>
-                      <div>
-                        <strong>Productos: </strong>
-                        <ul style={{paddingLeft:25}}>
-                          {productos.map((producto, index) => {
+                        </div>                     
+                        {/* LISTADO DE PRODUCTOS EXPANDIDO
+                          <ul style={{paddingLeft:25}}>
+                          {productos.map((producto, index2) => {
                             return(
                               <>
                                 <div key={index} className="Row" style={{placeItems:'center'}}>
                                   <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
                                     <Accion
-                                      icono={expandir2 === index2 ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
+                                      icono={expandir === index2 ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
                                       ayuda="Expandir"
                                       backgroundColor={"lightgrey"}
                                       disabled={false}
-                                      onClick={() =>{expandir2 === index2 ? setExpandir2() : setExpandir2(index2)}}
+                                      onClick={() =>{expandir === index2 ? setExpandir() : setExpandir(index2)}}
                                     />
                                   </div>
                                   <div style={{flex:1}}>
@@ -168,7 +167,7 @@ export default function Index ({BASE_URL}){
                               </>
                             )
                           })}
-                        </ul>
+                        </ul>*/}
                       </div>
                       <div className="Acciones">
                         
@@ -192,6 +191,5 @@ export default function Index ({BASE_URL}){
         />
       </div>
     </div>
-    </>
   )
 }

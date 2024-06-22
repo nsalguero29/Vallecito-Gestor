@@ -130,7 +130,7 @@
 
 .Row{
   display: flex;
-  width: 80%;
+  place-content: 'center';
 }
 
 .Botonera{

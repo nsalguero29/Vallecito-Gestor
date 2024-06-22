@@ -1,18 +1,10 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-	Button, TextField, InputLabel,
-  Select,
-  MenuItem,
-  Pagination
+	Button, TextField
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
-import {Accion, Paginador, ModalNuevaMarca} from '../comun/Main';
-import { useDatosCliente } from '../../hooks/useDatosCliente';
+import {Accion, Paginador, ModalNuevoCliente} from '../comun/Main';
 
 let controller = new AbortController();
 let oldController;
@@ -20,7 +12,8 @@ let oldController;
 export default function Index ({BASE_URL}){
 
   const [clientes, setClientes] = useState([]);
-  const [datosCliente, setDatoCliente] = useDatosCliente(null);
+  const [modalNuevoCliente, setModalNuevoCliente] = useState(false);
+
   const [expandir, setExpandir] = useState();
   const [expandir2, setExpandir2] = useState();
   const [actualizarLista, setActualizarLista] = useState(true);
@@ -87,7 +80,7 @@ export default function Index ({BASE_URL}){
         }
       })
       .catch((error) => {
-        alert("Error")
+        alert(error)
       })
     }
   }
@@ -103,97 +96,23 @@ export default function Index ({BASE_URL}){
   
 
   return(
-    <>   
-    <div className='' style={{display:'flex', flexDirection:'row'}}>
-      <div className='Formulario' style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
-        <h2>DATOS NUEVO CLIENTE</h2>
-        <div className="Row">
-          <TextField
-            style={{ flex: 1, margin: 10 }}
-            className='Dato'
-            label="Documento"
-            variant="outlined"
-            value={datosCliente.documento}
-            onChange={(e) => setDatoCliente('documento', e.target.value)}
-          />
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker 
-              label="Fecha de Nacimiento" 
-              value={dayjs(datosCliente.fechaNac)}
-              views={['day', 'month', 'year']}
-              onChange={(e) => setDatoCliente('fechaNac', e)}              
-            />
-          </LocalizationProvider>
+    <div className='' style={{display:'flex', flexDirection:'column'}}>
+      {modalNuevoCliente && 
+        <ModalNuevoCliente
+          titulo="Nuevo Cliente"
+          guardarCliente={(datosCliente)=>guardarCliente(datosCliente)}
+          salir={() => setModalNuevoCliente(false)}
+        />
+      }
+      <div style={{display:'flex', flex:1, flexDirection:'column'}}>
+        <div style={{display:'flex', flex:1, placeContent:'center'}}>
+            <h2>LISTADO DE CLIENTES</h2>          
         </div>
         <div className="Row">
-          <TextField
-            style={{ flex: 1, margin: 10 }}
-            className='Dato'
-            label="Apellidos"
-            variant="outlined"
-            value={datosCliente.apellidos}
-            onChange={(e) => setDatoCliente('apellidos', e.target.value)}
-          />
-          <TextField
-            style={{ flex: 1, margin: 10 }}
-            className='Dato'
-            label="Nombres"
-            variant="outlined"
-            value={datosCliente.nombres}
-            onChange={(e) => setDatoCliente('nombres', e.target.value)}
-          />
-        </div>
-        <div className="Row" >      
-          <TextField
-            style={{ flex: 1, margin: 10 }}
-            className='Dato'
-            label="Direccion"
-            variant="outlined"
-            value={datosCliente.direccion}
-            onChange={(e) => setDatoCliente('direccion', e.target.value)}
-          />
-          <TextField
-            style={{ flex: 1, margin: 10 }}
-            className='Dato'
-            label="Telefono"
-            variant="outlined"
-            value={datosCliente.telefono}
-            onChange={(e) => setDatoCliente('telefono', e.target.value)}
-          />
-        </div>
-        <div className="Row"> 
-          <TextField
-            style={{ flex: 1, margin: 10 }}
-            className='Dato'
-            label="E-Mail"
-            variant="outlined"
-            value={datosCliente.email}
-            onChange={(e) => setDatoCliente('email', e.target.value)}
-          />
-          <TextField
-            style={{ flex: 1, margin: 10 }}
-            className='Dato'
-            label="Instagram"
-            variant="outlined"
-            value={datosCliente.instagram}
-            onChange={(e) => setDatoCliente('instagram', e.target.value)}
-          />
-        </div>        
-        <div className='Botonera'>
-          <Button variant="contained" className='Boton' onClick={() => { guardarCliente(datosCliente) }}>Guardar Nuevo Cliente</Button>
-        </div> 
-      </div>
-      <div style={{display:'flex', flexDirection:'column', flex:1}}>
-        <div className="Row" style={{height: 70, width:'99%'}}>
-          <div style={{flex:1}}>
-            <center><h2>LISTADO DE CLIENTES</h2></center>
-          </div>
-        </div>
-        <div className="Row" style={{width:'99%'}}>
-          <div style={{display:'flex', flex:1, placeItems:'center'}}>
+          <div style={{display:'flex', flex:1, placeItems:'center', marginLeft:10}}>
             Documento: 
             <TextField
-              style={{ flex: 1, margin:10 }}
+              style={{ margin:10, width:350}}
               className='Dato'
               label="Buscar Documento"
               variant="outlined"
@@ -201,114 +120,117 @@ export default function Index ({BASE_URL}){
               onChange={(e) => {setBusqueda(e.target.value); setActualizarLista(true);}}
             />
           </div>
-        </div>        
-        <div className='Listado' style={{display:'flex', flex:1, width:'98%'}}>
+          <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
+            <Button variant="contained" className='Boton' onClick={() => { setModalNuevoCliente(true) }}>Nuevo Cliente</Button>
+          </div>   
+          <div style={{display:'flex', flex:1}}>
+          </div>        
+        </div>
+        <div className='Listado' style={{display:'flex', flex:1, width:'99%'}}>
           {clientes.length !== 0 ?
             clientes.map((cliente, index)=>{
               const bicicletas = cliente.bicicletas;
               return (
-                <>
-                  <div className="Listado">
-                    <div className="Detalles">
-                      <div style={{display:'flex', flexDirection:'row', 
-                      alignItems:'center', justifyContent:'center', width:'100%'}}>
-                        <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
-                          <Accion
-                            icono={expandir === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
-                            ayuda="Expandir"
-                            backgroundColor={"lightgrey"}
-                            disabled={false}
-                            onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
-                          />
-                        </div>
-                        {/* <div style={{flex:1, margin:'0px 4px', 
-                          display:'flex', justifyContent:'center'}}>
-                          (ID {item.id})
-                        </div> */}
-                        <div style={{display:'flex', flex:2, 
-                        flexDirection:'row', width:'100%'}}>
-                          <div style={{flex:2}}>
-                          <strong> Cliente: </strong> {cliente.apellidos}, {cliente.nombres} <strong> Telefono: </strong>  {cliente.telefono} <strong> Bicicletas: </strong> {bicicletas.length}
-                          </div>
-                        </div>
+                <div key={cliente.id} className="Listado">
+                  <div className="Detalles">
+                    <div style={{display:'flex', flexDirection:'row', 
+                    alignItems:'center', justifyContent:'center', width:'100%'}}>
+                      <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
+                        <Accion
+                          icono={expandir === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
+                          ayuda="Expandir"
+                          backgroundColor={"lightgrey"}
+                          disabled={false}
+                          onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
+                        />
                       </div>
-                      <div className="Acciones">
-                        
+                      {/* <div style={{flex:1, margin:'0px 4px', 
+                        display:'flex', justifyContent:'center'}}>
+                        (ID {item.id})
+                      </div> */}
+                      <div style={{display:'flex', flex:2, 
+                      flexDirection:'row', width:'100%'}}>
+                        <div style={{flex:2}}>
+                        <strong> Cliente: </strong> {cliente.apellidos}, {cliente.nombres} <strong> Telefono: </strong>  {cliente.telefono} <strong> Bicicletas: </strong> {bicicletas.length}
+                        </div>
                       </div>
                     </div>
-                    {expandir === index &&
-                      <div className="Preguntas">
-                        <div style={{display:'flex', flexDirection:'row'}}>
-                          <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
-                            <span>
-                              <strong>Documento: </strong> {cliente.documento}
-                            </span>
-                            <span>
-                              <strong>Apellidos: </strong> {cliente.apellidos}
-                            </span>
-                            <span>
-                              <strong>Nombres: </strong> {cliente.nombres}
-                            </span>
-                            <span>
-                              <strong>Fecha Nacimiento: </strong> {cliente.fechaNac}
-                            </span>
-                          </div>
-                          <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
-                            <span>
-                              <strong>Direccion: </strong> {cliente.direccion}
-                            </span>
-                            <span>
-                              <strong>Email: </strong> {cliente.email}
-                            </span>
-                            <span>
-                              <strong>Instagram: </strong> {cliente.instagram}
-                            </span>
-                          </div>
+                    <div className="Acciones">
+                      
+                    </div>
+                  </div>
+                  {expandir === index &&
+                    <div className="Preguntas">
+                      <div style={{display:'flex', flexDirection:'row'}}>
+                        <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
+                          <span>
+                            <strong>Documento: </strong> {cliente.documento}
+                          </span>
+                          <span>
+                            <strong>Apellidos: </strong> {cliente.apellidos}
+                          </span>
+                          <span>
+                            <strong>Nombres: </strong> {cliente.nombres}
+                          </span>
+                          <span>
+                            <strong>Fecha Nacimiento: </strong> {cliente.fechaNac}
+                          </span>
                         </div>
-                        <div>
-                          <strong>Bicicletas: </strong>
-                          <ul style={{paddingLeft:25}}>
-                            {bicicletas.map((bicicleta, index2) => {
-                              return(
-                                <>
-                                  <div key={index2} className="Row" style={{placeItems:'center'}}>
-                                    <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
-                                      <Accion
-                                        icono={expandir2 === index2 ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
-                                        ayuda="Expandir"
-                                        backgroundColor={"lightgrey"}
-                                        disabled={false}
-                                        onClick={() =>{expandir2 === index2 ? setExpandir2() : setExpandir2(index2)}}
-                                      />
-                                    </div>
-                                    <div style={{flex:1}}>
-                                      {bicicleta.modelo}<strong>{" (" + bicicleta.rodado + ")"}</strong>
-                                    </div>
-                                  </div>
-                                  {expandir2 === index2 &&
-                                    //EXPANDIR CON LOS ARREGLOS DE LA BICI?
-                                    <div style={{display:'flex', flexDirection:'row'}}>
-                                      <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
-                                        <span>
-                                          <strong>Documento: </strong> {cliente.documento}
-                                        </span>
-                                      </div>
-                                      <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
-                                        <span>
-                                          <strong>Direccion: </strong> {cliente.direccion}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  }
-                                </>
-                              )
-                            })}
-                          </ul>
+                        <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
+                          <span>
+                            <strong>Direccion: </strong> {cliente.direccion}
+                          </span>
+                          <span>
+                            <strong>Email: </strong> {cliente.email}
+                          </span>
+                          <span>
+                            <strong>Instagram: </strong> {cliente.instagram}
+                          </span>
                         </div>
                       </div>
-                    }                  
-                  </div>
-                </>
+                      <div>
+                        <strong>Bicicletas: </strong>
+                        <ul style={{paddingLeft:25}}>
+                          {bicicletas.map((bicicleta, index2) => {
+                            return(
+                              <>
+                                <div key={index2} className="Row" style={{placeItems:'center'}}>
+                                  <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
+                                    <Accion
+                                      icono={expandir2 === index2 ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
+                                      ayuda="Expandir"
+                                      backgroundColor={"lightgrey"}
+                                      disabled={false}
+                                      onClick={() =>{expandir2 === index2 ? setExpandir2() : setExpandir2(index2)}}
+                                    />
+                                  </div>
+                                  <div style={{flex:1}}>
+                                    {bicicleta.modelo}<strong>{" (" + bicicleta.rodado + ")"}</strong>
+                                  </div>
+                                </div>
+                                {expandir2 === index2 &&
+                                  //EXPANDIR CON LOS ARREGLOS DE LA BICI?
+                                  <div style={{display:'flex', flexDirection:'row'}}>
+                                    <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
+                                      <span>
+                                        <strong>Documento: </strong> {cliente.documento}
+                                      </span>
+                                    </div>
+                                    <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
+                                      <span>
+                                        <strong>Direccion: </strong> {cliente.direccion}
+                                      </span>
+                                    </div>
+                                  </div>
+                                }
+                              </>
+                            )
+                          })}
+                        </ul>
+                      </div>
+                    </div>
+                  }                  
+                </div>
               );
             })
             :
@@ -325,6 +247,5 @@ export default function Index ({BASE_URL}){
         />
       </div>
     </div>
-    </>
   )
 }
