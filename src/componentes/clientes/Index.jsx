@@ -11,7 +11,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import {Accion, ModalNuevaMarca} from '../comun/Main';
+import {Accion, Paginador, ModalNuevaMarca} from '../comun/Main';
 import { useDatosCliente } from '../../hooks/useDatosCliente';
 
 let controller = new AbortController();
@@ -66,8 +66,8 @@ export default function Index ({BASE_URL}){
     setActualizarLista(true);
   };
 
-  const handleChangeLimit = (event) => {
-    setLimit(parseInt(event.target.value, 10));
+  const handleChangeLimit = (newLimit) => {
+    setLimit(parseInt(newLimit, 10));
     handleChangePage(1);
   };
 
@@ -315,30 +315,14 @@ export default function Index ({BASE_URL}){
             <center><strong>Sin Resultados</strong></center>
           }
         </div>
-        <div style={{display:'flex', width:'100%', placeItems:'center', flexDirection:'column'}}>
-          <div>            
-            <Pagination 
-              count={paginasTotales} 
-              shape="rounded" 
-              page={page} 
-              onChange={(e, nuevaPag)=> handleChangePage(nuevaPag)}
-              style={{marginTop:10}}
-              />             
-          </div>
-          <div style={{display:'flex', flexDirection:'row', placeItems:'center'}}> 
-          <InputLabel id="Reglabel" className="LabelPaginador" style={{textWrap: 'wrap',textAlign: 'center'}}>Registros por Pagina</InputLabel>
-            <Select
-              labelId="Reglabel"
-              value={limit}
-              onChange={(e)=>handleChangeLimit(e)}
-            >
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-              <MenuItem value={25}>25</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-            </Select>
-          </div>
-        </div>
+        <Paginador
+          page={page}
+          limit={limit}
+          paginasTotales={paginasTotales}
+          handleChangePage={(nuevaPag)=>handleChangePage(nuevaPag)}
+          handleChangeLimit={(newLimit)=>handleChangeLimit(newLimit)}
+          opciones={[10,15,25,50]}
+        />
       </div>
     </div>
     </>
