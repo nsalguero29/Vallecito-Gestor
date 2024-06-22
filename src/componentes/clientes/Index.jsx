@@ -2,22 +2,21 @@ import { Link } from "react-router-dom"
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-	Button, TextField, Autocomplete
+	Button, TextField, TablePagination, InputLabel,
+  Select,
+  MenuItem,
+  Pagination
 } from '@mui/material';
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import {Accion} from '../comun/Main';
 import { useDatosCliente } from '../../hooks/useDatosCliente';
 
 let controller = new AbortController();
 let oldController;
-
-function Tarjeta ({titulo, url, icono}){
-  return(
-    <Link to={url} className="Tarjeta">
-      <span className="material-icons Icono">{icono}</span>      
-      {titulo}
-    </Link>
-  )
-}
 
 export default function Index ({BASE_URL}){
 
@@ -25,28 +24,66 @@ export default function Index ({BASE_URL}){
   const [datosCliente, setDatoCliente] = useDatosCliente(null);
   const [expandir, setExpandir] = useState();
   const [expandir2, setExpandir2] = useState();
+  const [actualizarLista, setActualizarLista] = useState(true);
 
-  useEffect(() => {
+  const [busqueda, setBusqueda] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [paginasTotales, setPaginasTotales] = useState(0);
+
+  const init = function(){
+    dayjs.locale('es');
+    recargarClientes();
+  }
+
+  const recargarClientes = function(){
     const url = BASE_URL + "clientes/listar";
-    const config = {headers:{authorization: sessionStorage.getItem('token')}}
+    
+    oldController = controller;
+    oldController.abort();
+    oldController = null;
+    controller = new AbortController();
+
+    const offset = (page-1)* limit;
+    const config = {
+      headers:{authorization: sessionStorage.getItem('token')},
+      params:{limit, offset, busqueda},
+      signal: controller.signal
+    }
     axios.get(url, config)
     .then((resp)=>{
       if(resp.data.status === "ok"){
         setClientes(resp.data.clientes);
+        const paginasTotales = Math.ceil(resp.data.total / limit);
+        setPaginasTotales(paginasTotales);
+        setActualizarLista(false);
       }
     })
-  },[])
+    .catch((error)=>{if(!axios.isCancel) alert(error);})
+  }
+
+  const handleChangePage = (newPage) => {
+    setPage(newPage);
+    setActualizarLista(true);
+  };
+
+  const handleChangeLimit = (event) => {
+    setLimit(parseInt(event.target.value, 10));
+    handleChangePage(1);
+  };
 
   const guardarCliente= (datosCliente) => {
     if (window.confirm("¿Esta seguro que desea registrar un cliente?")){
       const url = BASE_URL + 'clientes/nuevo'
       const config = {headers:{authorization:sessionStorage.getItem('token')}};
+      console.log({datosCliente});
       axios.post(url, datosCliente, config)
       .then((res) => {
         console.log(res.data);
         if (res.data.status === "ok"){
           alert("Guardado");
-          window.location.reload();
+          setActualizarLista(true);
+          //window.location.reload();
         } else {
           alert("Error")
         }
@@ -57,10 +94,20 @@ export default function Index ({BASE_URL}){
     }
   }
 
+  useEffect(() => {
+    init();
+  },[])
+
+  useEffect(() =>{
+    if(actualizarLista)
+      recargarClientes();
+  },[actualizarLista])
+  
+
   return(
     <>   
-    <div className='ContenedorPrincipal' style={{display:'flex', flexDirection:'row'}}>
-      <div className='Formulario'style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
+    <div className='' style={{display:'flex', flexDirection:'row'}}>
+      <div className='Formulario' style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
         <h2>DATOS NUEVO CLIENTE</h2>
         <div className="Row">
           <TextField
@@ -70,15 +117,16 @@ export default function Index ({BASE_URL}){
             variant="outlined"
             value={datosCliente.documento}
             onChange={(e) => setDatoCliente('documento', e.target.value)}
-            />
-            <TextField
-            style={{ flex: 1, margin: 10 }}
-            className='Dato'
-            label="Fecha Nacimiento"
-            variant="outlined"
-            value={datosCliente.fechaNac}
-            onChange={(e) => setDatoCliente('fechaNac', e.target.value)}
           />
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+            <DatePicker 
+              style={{ flex: 1, margin: 10 }}
+              label="Fecha de Nacimiento" 
+              value={dayjs(datosCliente.fechaNac)}
+              views={['day', 'month', 'year']}
+              onChange={(e) => setDatoCliente('fechaNac', e)}
+            />
+          </LocalizationProvider>
         </div>
         <div className="Row">
           <TextField
@@ -89,8 +137,6 @@ export default function Index ({BASE_URL}){
             value={datosCliente.apellidos}
             onChange={(e) => setDatoCliente('apellidos', e.target.value)}
           />
-        </div>
-        <div className="Row">
           <TextField
             style={{ flex: 1, margin: 10 }}
             className='Dato'
@@ -140,9 +186,26 @@ export default function Index ({BASE_URL}){
           <Button variant="contained" className='Boton' onClick={() => { guardarCliente(datosCliente) }}>Guardar Nuevo Cliente</Button>
         </div> 
       </div>
-      <div style={{display:'flex', flex:1}}>
-        <div className='Listado' style={{display:'flex', flex:1}}>
-          <center><h2>LISTADO DE CLIENTES</h2></center>
+      <div style={{display:'flex', flexDirection:'column', flex:1}}>
+        <div className="Row" style={{height: 70, width:'99%'}}>
+          <div style={{flex:1}}>
+          <TextField
+              style={{ flex: 1, marginTop:10, marginBottom:10, marginLeft:10, width:'100%' }}
+              className='Dato'
+              label="Buscar Documento"
+              variant="outlined"
+              value={busqueda}
+              onChange={(e) => {setBusqueda(e.target.value); setActualizarLista(true);}}
+            />
+          </div>
+          <div style={{flex:1}}>
+            <center><h2>LISTADO DE CLIENTES</h2></center>
+          </div>
+          <div style={{flex:1}}>
+            
+          </div>
+        </div>
+        <div className='Listado' style={{display:'flex', flex:1, width:'98%'}}>
           {clientes?.map((cliente, index)=>{
             const bicicletas = cliente.bicicletas;
             return (
@@ -245,12 +308,32 @@ export default function Index ({BASE_URL}){
                         </ul>
                       </div>
                     </div>
-                  }
+                  }                  
                 </div>
               </>
             );
           })}
         </div>
+        <div style={{display:'flex', width:'100%', placeContent:'center'}}>
+            <Pagination 
+              count={paginasTotales} 
+              shape="rounded" 
+              page={page} 
+              onChange={(e, nuevaPag)=> handleChangePage(nuevaPag)}
+              style={{marginTop:10}}
+            />             
+            <Select
+              labelId="Reglabel"
+              value={limit}
+              onChange={(e)=>handleChangeLimit(e)}
+            >
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={15}>15</MenuItem>
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+            </Select>
+            <InputLabel id="Reglabel" className="LabelPaginador" style={{textWrap: 'wrap',textAlign: 'center'}}>Registros por Pagina</InputLabel>
+          </div>
       </div>
     </div>
     </>

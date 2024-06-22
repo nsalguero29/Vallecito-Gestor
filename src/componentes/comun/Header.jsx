@@ -46,7 +46,7 @@ export default function Header({logged}){
 
   return(
     <div className="Header">
-      <Link to="/" className="Titulo" style={{display:"flex", width:100, placeContent:'center'}}> 
+      <Link to="/" className="Titulo" style={{display:"flex", width:70, placeContent:'center'}}> 
         <img src={Logo} alt="Logo" style={{width:"100%"}}/> 
       </Link>
       <div className="Opciones">
