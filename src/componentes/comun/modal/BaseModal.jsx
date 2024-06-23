@@ -8,7 +8,7 @@ export default function BaseModal({ children, titulo, salir, loading }) {
         onClick={(e) => e.stopPropagation()} 
         style={loading && {paddingTop:'150px', paddingBottom:'130px'}}
       >
-        <div className="Titulo">
+        <div className="Titulo">          
           <b><h3 style={{ padding: '0 55px' }}>{titulo}</h3></b>
           {!loading &&
             <span className="Salir" onClick={() => salir()}>X</span>

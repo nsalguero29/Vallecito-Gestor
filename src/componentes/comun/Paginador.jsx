@@ -29,7 +29,7 @@ export default function Paginador({page, limit , handleChangePage,
       >
         {opciones.map((op)=>{
           return(
-            <MenuItem value={op}>{op.toString()}</MenuItem>
+            <MenuItem key={op} value={op}>{op.toString()}</MenuItem>
           )
         })}
       </Select>

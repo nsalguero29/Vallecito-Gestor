@@ -44,7 +44,7 @@ export default function Index ({BASE_URL}){
     }
     axios.get(url, config)
     .then((resp)=>{
-      if(resp.data.status === "ok"){
+      if(resp.data.status === "ok"){        
         setClientes(resp.data.clientes);
         const paginasTotales = Math.ceil(resp.data.total / limit);
         setPaginasTotales(paginasTotales);
