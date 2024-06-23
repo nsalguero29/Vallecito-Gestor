@@ -5,15 +5,15 @@ import {
 	Button, TextField, Autocomplete
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Paginador, ModalNuevoProveedor} from '../comun/Main';
+import {Accion, Paginador, ModalNuevoProducto} from '../comun/Main';
 
 let controller = new AbortController();
 let oldController;
 
 export default function Index ({BASE_URL}){
   
-  const [proveedores, setProveedores] = useState([]);
-  const [modalNuevoProveedor, setModalNuevoProveedor] = useState(false);
+  const [productos, setProductos] = useState([]);
+  const [modalNuevoProducto, setModalNuevoProducto] = useState(false);
 
   const [expandir, setExpandir] = useState();
   const [expandir2, setExpandir2] = useState();
@@ -26,11 +26,11 @@ export default function Index ({BASE_URL}){
 
   const init = function(){
     dayjs.locale('es');
-    recargarProveedores();
+    recargarProductos();
   }
 
-  const recargarProveedores = function(){
-    const url = BASE_URL + "proveedores/listar";
+  const recargarProductos = function(){
+    const url = BASE_URL + "productos/listar";
     
     oldController = controller;
     oldController.abort();
@@ -46,7 +46,7 @@ export default function Index ({BASE_URL}){
     axios.get(url, config)
     .then((resp)=>{
       if(resp.data.status === "ok"){
-        setProveedores(resp.data.proveedores);
+        setProductos(resp.data.productos);
         const paginasTotales = Math.ceil(resp.data.total / limit);
         setPaginasTotales(paginasTotales);
         setActualizarLista(false);
@@ -65,11 +65,11 @@ export default function Index ({BASE_URL}){
     handleChangePage(1);
   };
 
-  const guardarProveedor = (datosProveedor) => {
-    if (window.confirm("¿Esta seguro que desea registrar un proveedor?")){
-      const url = BASE_URL + 'proveedores/'
+  const guardarProducto = (datosProducto) => {
+    if (window.confirm("¿Esta seguro que desea registrar un producto?")){
+      const url = BASE_URL + 'productos/'
       const config = {headers:{authorization:sessionStorage.getItem('token')}};
-      axios.post(url, datosProveedor, config)
+      axios.post(url, datosProducto, config)
       .then((res) => {
         if (res.data.status === "ok"){
           alert("Guardado");
@@ -90,46 +90,46 @@ export default function Index ({BASE_URL}){
 
   useEffect(() =>{
     if(actualizarLista)
-      recargarProveedores();
+      recargarProductos();
   },[actualizarLista])
 
   return(
     <div className='' style={{display:'flex', flexDirection:'row'}}>
-      {modalNuevoProveedor && 
-        <ModalNuevoProveedor
+      {modalNuevoProducto && 
+        <ModalNuevoProducto
           titulo="Nuevo Proveedor"
-          guardarProveedor={(datosProveedor)=>guardarProveedor(datosProveedor)}
-          salir={() => setModalNuevoProveedor(false)}
+          guardarProveedor={(datosProducto)=>guardarProducto(datosProducto)}
+          salir={() => setModalNuevoProducto(false)}
         />
       }
       
       <div style={{display:'flex', flex:1, flexDirection:'column'}}>
         <div style={{display:'flex', flex:1, placeContent:'center'}}>
-            <h2>LISTADO DE PROVEEDORES</h2>          
+            <h2>LISTADO DE PRODUCTOS</h2>          
         </div>
         <div className="Row">
           <div style={{display:'flex', flex:1, placeItems:'center', marginLeft:10}}>
-            Proveedor: 
+            Producto: 
             <TextField
               style={{ margin:10, width:350}}
               className='Dato'
-              label="Buscar Proveedor"
+              label="Buscar Producto"
               variant="outlined"
               value={busqueda}
               onChange={(e) => {setBusqueda(e.target.value); setActualizarLista(true);}}
             />
           </div>
           <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
-            <Button variant="contained" className='Boton' onClick={() => { setModalNuevoProveedor(true) }}>Nuevo Proveedor</Button>
+            <Button variant="contained" className='Boton' onClick={() => { setModalNuevoProducto(true) }}>Nuevo Producto</Button>
           </div>   
           <div style={{display:'flex', flex:1}}>
           </div>        
         </div>
         <div className='Listado' style={{display:'flex', flex:1,  width:'99%'}}>
-          {proveedores?.map((proveedor, index)=>{
-            const productos = proveedor.productos;
+          {productos?.map((producto, index)=>{
+            const proveedores = producto.proveedores;
             return (
-              <div key={proveedor.id} className="Listado">
+              <div key={producto.id} className="Listado">
                 <div className="Detalles">
                   <div style={{display:'flex', flexDirection:'row', 
                   alignItems:'center', justifyContent:'center', width:'100%'}}>
@@ -148,8 +148,16 @@ export default function Index ({BASE_URL}){
                     </div> */}
                     <div style={{display:'flex', flex:2, 
                     flexDirection:'row', width:'100%'}}>
-                      <div style={{flex:2}}>
-                      <strong> Proveedor: </strong> {proveedor.proveedor} <strong> Telefono: </strong>  {proveedor.telefono} <strong> Productos: </strong> {productos.length}
+                      <div className="Row" style={{flex:2, placeContent:'space-between'}}>
+                        <div style={{flex:1}}>
+                          <strong> Producto: </strong> {producto.producto} 
+                        </div>
+                        <div style={{flex:1}}>
+                          <strong> Stock: </strong>  {producto.stock} 
+                        </div>
+                        <div style={{flex:1}}>
+                          <strong> Proveedores: </strong> {proveedores?.length}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -157,7 +165,7 @@ export default function Index ({BASE_URL}){
                     
                   </div>
                 </div>
-                {expandir === index &&
+                {/*expandir === index &&
                   <div className="Preguntas">
                     <div style={{display:'flex', flexDirection:'row'}}>
                       <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
@@ -212,7 +220,7 @@ export default function Index ({BASE_URL}){
                       </div>
                     }
                   </div>
-                }
+                */}
               </div>
             );
           })}

@@ -4,6 +4,7 @@ import Accion from "./Accion";
 import Paginador from "./Paginador";
 import ModalNuevaMarca from "./modal/ModalNuevaMarca";
 import ModalNuevoCliente from "./modal/ModalNuevoCliente";
+import ModalNuevoProducto from "./modal/ModalNuevoProducto";
 import ModalNuevoProveedor from "./modal/ModalNuevoProveedor";
 
 export { 
@@ -13,5 +14,6 @@ export {
     Paginador,
     ModalNuevaMarca,
     ModalNuevoCliente,
+    ModalNuevoProducto,
     ModalNuevoProveedor
 };

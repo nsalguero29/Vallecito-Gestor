@@ -4,6 +4,7 @@ import Logout from "./login/Logout";
 import Bicicletas from "./bicicletas/Index";
 import Clientes from "./clientes/Index";
 import Marcas from "./marcas/Index";
+import Productos from "./productos/Index";
 import Proveedores from "./proveedores/Index";
 
 export {
@@ -13,5 +14,6 @@ export {
   Bicicletas,
   Clientes,
   Marcas,
-  Proveedores
+  Productos,
+  Proveedores,
 }
