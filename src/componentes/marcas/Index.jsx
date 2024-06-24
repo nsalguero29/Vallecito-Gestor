@@ -142,7 +142,7 @@ export default function Index ({BASE_URL}){
                         <div style={{display:'flex', flex:1, 
                         flexDirection:'row', width:'100%'}}>
                           <div style={{flex:2}}>
-                            <strong> Marca: </strong> {marca.marca} - <strong>Productos ({productos.length}) </strong>
+                            <strong> Marca: </strong> {marca.marca} - <strong>Productos ({productos?.length}) </strong>
                           </div>
                         </div>                     
                         {/* LISTADO DE PRODUCTOS EXPANDIDO

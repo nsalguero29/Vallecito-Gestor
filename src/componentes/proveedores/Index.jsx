@@ -126,7 +126,8 @@ export default function Index ({BASE_URL}){
           </div>        
         </div>
         <div className='Listado' style={{display:'flex', flex:1,  width:'99%'}}>
-          {proveedores?.map((proveedor, index)=>{
+          {proveedores.length !== 0 ?
+            proveedores.map((proveedor, index)=>{
             const productos = proveedor.productos;
             return (
               <div key={proveedor.id} className="Listado">
@@ -215,7 +216,10 @@ export default function Index ({BASE_URL}){
                 }
               </div>
             );
-          })}
+            })
+            :
+            <center><strong>Sin Resultados</strong></center>
+          }
         </div>
         <Paginador
           page={page}
