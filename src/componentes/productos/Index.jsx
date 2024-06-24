@@ -13,6 +13,8 @@ let oldController;
 export default function Index ({BASE_URL}){
   
   const [productos, setProductos] = useState([]);
+  const [proveedores, setProveedores] = useState([]);
+  const [marcas, setMarcas] = useState([]);
   const [modalNuevoProducto, setModalNuevoProducto] = useState(false);
 
   const [expandir, setExpandir] = useState();
@@ -26,11 +28,13 @@ export default function Index ({BASE_URL}){
 
   const init = function(){
     dayjs.locale('es');
-    recargarProductos();
+    cargarProveedores();
+    cargarMarcas();
+    cargarProductos();
   }
 
-  const recargarProductos = function(){
-    const url = BASE_URL + "productos/listar";
+  const cargarProductos = function(){
+    const url = BASE_URL + "productos/buscar";
     
     oldController = controller;
     oldController.abort();
@@ -55,6 +59,34 @@ export default function Index ({BASE_URL}){
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
 
+  const cargarProveedores = function(){
+    const url = BASE_URL + "proveedores/listar";
+    const config = {
+      headers:{authorization: sessionStorage.getItem('token')}      
+    }
+    axios.get(url, config)
+    .then((resp)=>{
+      if(resp.data.status === "ok"){
+        setProveedores(resp.data.proveedores);
+      }
+    })
+    .catch((error)=>{if(!axios.isCancel) alert(error);})
+  }
+
+  const cargarMarcas = function(){
+    const url = BASE_URL + "marcas/listar";
+    const config = {
+      headers:{authorization: sessionStorage.getItem('token')}      
+    }
+    axios.get(url, config)
+    .then((resp)=>{
+      if(resp.data.status === "ok"){
+        setMarcas(resp.data.marcas);
+      }
+    })
+    .catch((error)=>{if(!axios.isCancel) alert(error);})
+  }
+
   const handleChangePage = (newPage) => {
     setPage(newPage);
     setActualizarLista(true);
@@ -69,6 +101,8 @@ export default function Index ({BASE_URL}){
     if (window.confirm("¿Esta seguro que desea registrar un producto?")){
       const url = BASE_URL + 'productos/'
       const config = {headers:{authorization:sessionStorage.getItem('token')}};
+      datosProducto.marcaId = [datosProducto.marcaId.id];
+      datosProducto.proveedorId = [datosProducto.proveedorId.id];
       axios.post(url, datosProducto, config)
       .then((res) => {
         if (res.data.status === "ok"){
@@ -90,7 +124,7 @@ export default function Index ({BASE_URL}){
 
   useEffect(() =>{
     if(actualizarLista)
-      recargarProductos();
+      cargarProductos();
   },[actualizarLista])
 
   return(
@@ -98,7 +132,9 @@ export default function Index ({BASE_URL}){
       {modalNuevoProducto && 
         <ModalNuevoProducto
           titulo="Nuevo Proveedor"
-          guardarProveedor={(datosProducto)=>guardarProducto(datosProducto)}
+          proveedoresLista={proveedores}
+          marcasLista={marcas}
+          guardarProducto={(datosProducto)=>guardarProducto(datosProducto)}
           salir={() => setModalNuevoProducto(false)}
         />
       }

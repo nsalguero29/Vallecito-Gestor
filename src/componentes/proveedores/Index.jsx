@@ -26,11 +26,11 @@ export default function Index ({BASE_URL}){
 
   const init = function(){
     dayjs.locale('es');
-    recargarProveedores();
+    cargarProveedores();
   }
 
-  const recargarProveedores = function(){
-    const url = BASE_URL + "proveedores/listar";
+  const cargarProveedores = function(){
+    const url = BASE_URL + "proveedores/buscar";
     
     oldController = controller;
     oldController.abort();
@@ -90,7 +90,7 @@ export default function Index ({BASE_URL}){
 
   useEffect(() =>{
     if(actualizarLista)
-      recargarProveedores();
+      cargarProveedores();
   },[actualizarLista])
 
   return(

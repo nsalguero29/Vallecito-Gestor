@@ -1,13 +1,15 @@
 import BaseModal from "./BaseModal";
 import { 
     Button,
-    TextField
+    TextField,
+    Autocomplete
   } from '@mui/material';
-import { useDatosProveedor } from '../../../hooks/useDatosProveedor';
+import { useDatosProducto } from '../../../hooks/useDatosProducto';
 
-export default function ModalGenerado ({guardarProveedor, salir, titulo}){
+export default function ModalGenerado ({guardarProducto, proveedoresLista,
+  marcasLista, salir, titulo}){
 
-    const [datosProveedor, setDatoProveedor] = useDatosProveedor(null);
+    const [datosProducto, setDatoProducto] = useDatosProducto(null);
 
     return (
         <BaseModal titulo={titulo} salir={()=>salir()}>
@@ -15,61 +17,75 @@ export default function ModalGenerado ({guardarProveedor, salir, titulo}){
           <div className="Row">
             <TextField
               style={{ flex: 1, margin: 10 }}
-              className='Dato'
-              label="Proveedor"
+              className="Dato"
+              label="Producto"
               variant="outlined"
-              value={datosProveedor.apellidos}
-              onChange={(e) => setDatoProveedor('proveedor', e.target.value)}
+              value={datosProducto.producto}
+              onChange={(e) => setDatoProducto("producto", e.target.value)}
             />
           </div>
           <div className="Row">
+            <Autocomplete
+              value={datosProducto.proveedorId}
+              onChange={(e,n) => {setDatoProducto('proveedorId', n)}}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              options={proveedoresLista}
+              getOptionLabel={(option) => option.proveedor}
+              noOptionsText="Sin resultados"
+              size="small"
+              style={{flex: 3, maxWidth:350, margin: '4px 4px'}}
+              renderInput={(params) => <TextField {...params} label="Proveedores"/>}
+            />
             <TextField
               style={{ flex: 1, margin: 10 }}
               className='Dato'
-              label="Contacto"
+              label="Codigo Proveedor"
               variant="outlined"
-              value={datosProveedor.apellidos}
-              onChange={(e) => setDatoProveedor('nombreContacto', e.target.value)}
+              value={datosProducto.codigoProveedor}
+              onChange={(e) => setDatoProducto('codigoProveedor', e.target.value)}
             />
           </div>
-          <div className="Row" >      
+          <div className="Row" >  
+            <Autocomplete
+              value={datosProducto.marcaId}
+              onChange={(e,n) => {setDatoProducto('marcaId', n)}}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              options={marcasLista}
+              getOptionLabel={(option) => option.marca}
+              noOptionsText="Sin resultados"
+              size="small"
+              style={{flex: 3, maxWidth:350, margin: '4px 4px'}}
+              renderInput={(params) => <TextField {...params} label="Marca"/>}
+            />    
             <TextField
               style={{ flex: 1, margin: 10 }}
               className='Dato'
-              label="Direccion"
+              label="Stock"
               variant="outlined"
-              value={datosProveedor.direccion}
-              onChange={(e) => setDatoProveedor('direccion', e.target.value)}
+              value={datosProducto.stock}
+              onChange={(e) => setDatoProducto('stock', e.target.value)}
             />
             <TextField
               style={{ flex: 1, margin: 10 }}
               className='Dato'
-              label="Telefono"
+              label="precioLista"
               variant="outlined"
-              value={datosProveedor.telefono}
-              onChange={(e) => setDatoProveedor('telefono', e.target.value)}
+              value={datosProducto.precioLista}
+              onChange={(e) => setDatoProducto('precioLista', e.target.value)}
             />
           </div>
           <div className="Row"> 
             <TextField
               style={{ flex: 1, margin: 10 }}
               className='Dato'
-              label="E-Mail"
+              label="Observacion"
               variant="outlined"
-              value={datosProveedor.email}
-              onChange={(e) => setDatoProveedor('email', e.target.value)}
-            />
-            <TextField
-              style={{ flex: 1, margin: 10 }}
-              className='Dato'
-              label="Instagram"
-              variant="outlined"
-              value={datosProveedor.instagram}
-              onChange={(e) => setDatoProveedor('instagram', e.target.value)}
+              value={datosProducto.observacion}
+              onChange={(e) => setDatoProducto('observacion', e.target.value)}
             />
           </div>        
           <div className='Botonera'>
-            <Button variant="contained" className='Boton' onClick={() => { salir(); guardarProveedor(datosProveedor) }}>Guardar Nuevo Proveedor</Button>
+            <Button variant="contained" className='Boton' onClick={() => { salir(); guardarProducto(datosProducto) }}>Guardar Nuevo Producto</Button>
           </div> 
         </div>
         </BaseModal>
