@@ -26,13 +26,13 @@ export default function Index ({BASE_URL}){
   const [limit, setLimit] = useState(10);
   const [paginasTotales, setPaginasTotales] = useState(0);
 
-  const init = function(){
+  const init = () => {
     cargarProveedores();
     cargarMarcas();
     cargarProductos();
   }
 
-  const cargarProductos = function(busquedaNew = null){
+  const cargarProductos = (busquedaNew = null) => {
     const url = BASE_URL + "productos/buscar";
     
     oldController = controller;
@@ -57,7 +57,7 @@ export default function Index ({BASE_URL}){
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
 
-  const cargarProveedores = function(){
+  const cargarProveedores = () => {
     const url = BASE_URL + "proveedores/listar";
     const config = {
       headers:{authorization: sessionStorage.getItem('token')}      
@@ -71,7 +71,7 @@ export default function Index ({BASE_URL}){
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
 
-  const cargarMarcas = function(){
+  const cargarMarcas = () => {
     const url = BASE_URL + "marcas/listar";
     const config = {
       headers:{authorization: sessionStorage.getItem('token')}      
@@ -105,14 +105,13 @@ export default function Index ({BASE_URL}){
       .then((res) => {
         if (res.data.status === "ok"){
           alert("Guardado");
-          //setActualizarLista(true);
           cargarProductos();
         } else {
           alert("Error")
         }
       })
       .catch((error) => {
-        alert("Error")
+        alert(error)
       })
     }
   }
@@ -125,7 +124,7 @@ export default function Index ({BASE_URL}){
     <div className='' style={{display:'flex', flexDirection:'row'}}>
       {modalNuevoProducto && 
         <ModalNuevoProducto
-          titulo="Nuevo Proveedor"
+          titulo="Nuevo Producto"
           proveedoresLista={proveedores}
           marcasLista={marcas}
           guardarProducto={(datosProducto)=>guardarProducto(datosProducto)}
@@ -173,10 +172,6 @@ export default function Index ({BASE_URL}){
                           onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
                         />
                       </div>
-                      {/* <div style={{flex:1, margin:'0px 4px', 
-                        display:'flex', justifyContent:'center'}}>
-                        (ID {item.id})
-                      </div> */}
                       <div style={{display:'flex', flex:2, 
                       flexDirection:'row', width:'100%'}}>
                         <div className="Row" style={{flex:2, placeContent:'space-between'}}>
@@ -187,7 +182,10 @@ export default function Index ({BASE_URL}){
                             <strong> Stock: </strong>  {producto.stock} 
                           </div>
                           <div style={{flex:1}}>
-                            <strong> Proveedores: </strong> {proveedores?.length}
+                            <strong> Marca: </strong> {producto.marca.marca}
+                          </div>
+                          <div style={{flex:1}}>
+                            <strong> Proveedor: </strong> {producto.proveedor.proveedor}
                           </div>
                         </div>
                       </div>

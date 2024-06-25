@@ -32,9 +32,9 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista,
               options={proveedoresLista}
               getOptionLabel={(option) => option.proveedor}
               noOptionsText="Sin resultados"
-              size="small"
-              style={{flex: 3, maxWidth:350, margin: '4px 4px'}}
-              renderInput={(params) => <TextField {...params} label="Proveedores"/>}
+              size="medium"
+              style={{flex: 3, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
+              renderInput={(params) => <TextField {...params} label="Proveedor"/>}
             />
             <TextField
               style={{ flex: 1, margin: 10 }}
@@ -53,22 +53,22 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista,
               options={marcasLista}
               getOptionLabel={(option) => option.marca}
               noOptionsText="Sin resultados"
-              size="small"
-              style={{flex: 3, maxWidth:350, margin: '4px 4px'}}
+              size="medium"
+              style={{flex: 3, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
               renderInput={(params) => <TextField {...params} label="Marca"/>}
             />    
             <TextField
-              style={{ flex: 1, margin: 10 }}
+              style={{ flex: 2, margin: 10 }}
               className='Dato'
-              label="Stock"
+              label="Cantidad"
               variant="outlined"
               value={datosProducto.stock}
               onChange={(e) => setDatoProducto('stock', e.target.value)}
             />
             <TextField
-              style={{ flex: 1, margin: 10 }}
+              style={{ flex: 2, margin: 10 }}
               className='Dato'
-              label="precioLista"
+              label="Precio Lista"
               variant="outlined"
               value={datosProducto.precioLista}
               onChange={(e) => setDatoProducto('precioLista', e.target.value)}

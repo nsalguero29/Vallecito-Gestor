@@ -9,6 +9,7 @@ import {Accion, Paginador, ModalNuevoProveedor} from '../comun/Main';
 
 let controller = new AbortController();
 let oldController;
+dayjs.locale('es');
 
 export default function Index ({BASE_URL}){
   
@@ -25,11 +26,10 @@ export default function Index ({BASE_URL}){
   const [paginasTotales, setPaginasTotales] = useState(0);
 
   const init = function(){
-    dayjs.locale('es');
     cargarProveedores();
   }
 
-  const cargarProveedores = function(){
+  const cargarProveedores = (busquedaNew = null) => {
     const url = BASE_URL + "proveedores/buscar";
     
     oldController = controller;
@@ -40,7 +40,7 @@ export default function Index ({BASE_URL}){
     const offset = (page-1)* limit;
     const config = {
       headers:{authorization: sessionStorage.getItem('token')},
-      params:{limit, offset, busqueda},
+      params:{limit, offset, busqueda:busquedaNew!==null? busquedaNew:busqueda},
       signal: controller.signal
     }
     axios.get(url, config)
@@ -57,7 +57,7 @@ export default function Index ({BASE_URL}){
 
   const handleChangePage = (newPage) => {
     setPage(newPage);
-    setActualizarLista(true);
+    cargarProveedores();
   };
 
   const handleChangeLimit = (newLimit) => {
@@ -73,7 +73,7 @@ export default function Index ({BASE_URL}){
       .then((res) => {
         if (res.data.status === "ok"){
           alert("Guardado");
-          setActualizarLista(true);
+          cargarProveedores();
         } else {
           alert("Error")
         }
@@ -87,11 +87,6 @@ export default function Index ({BASE_URL}){
   useEffect(() => {
     init();
   },[])
-
-  useEffect(() =>{
-    if(actualizarLista)
-      cargarProveedores();
-  },[actualizarLista])
 
   return(
     <div className='' style={{display:'flex', flexDirection:'row'}}>
@@ -116,7 +111,7 @@ export default function Index ({BASE_URL}){
               label="Buscar Proveedor"
               variant="outlined"
               value={busqueda}
-              onChange={(e) => {setBusqueda(e.target.value); setActualizarLista(true);}}
+              onChange={(e) => {setBusqueda(e.target.value); cargarProveedores(e.target.value);}}
             />
           </div>
           <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
@@ -149,8 +144,16 @@ export default function Index ({BASE_URL}){
                     </div> */}
                     <div style={{display:'flex', flex:2, 
                     flexDirection:'row', width:'100%'}}>
-                      <div style={{flex:2}}>
-                      <strong> Proveedor: </strong> {proveedor.proveedor} <strong> Telefono: </strong>  {proveedor.telefono} <strong> Productos: </strong> {productos.length}
+                      <div className="Row" style={{flex:2, placeContent:'space-between'}}>
+                        <div style={{flex:1}}>
+                          <strong> Proveedor: </strong> {proveedor.proveedor} 
+                        </div>
+                        <div style={{flex:1}}>
+                          <strong> Telefono: </strong>  {proveedor.telefono} 
+                        </div>
+                        <div style={{flex:1}}>
+                          <strong> Productos: </strong> {productos.length}
+                        </div>
                       </div>
                     </div>
                   </div>

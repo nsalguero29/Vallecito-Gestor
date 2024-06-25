@@ -9,6 +9,7 @@ import {Accion, ModalNuevaMarca, Paginador} from '../comun/Main';
 
 let controller = new AbortController();
 let oldController;
+dayjs.locale('es');
 
 export default function Index ({BASE_URL}){
 
@@ -25,12 +26,11 @@ export default function Index ({BASE_URL}){
   const [paginasTotales, setPaginasTotales] = useState(0);
 
   const init = function(){
-    dayjs.locale('es');
-    recargarMarcas();
+    cargarMarcas();
   }
 
-  const recargarMarcas = function(){
-    const url = BASE_URL + "marcas/listar";
+  const cargarMarcas = (busquedaNew = null)=>{
+    const url = BASE_URL + "marcas/buscar";
     
     oldController = controller;
     oldController.abort();
@@ -40,7 +40,7 @@ export default function Index ({BASE_URL}){
     const offset = (page-1)* limit;
     const config = {
       headers:{authorization: sessionStorage.getItem('token')},
-      params:{limit, offset, busqueda},
+      params:{limit, offset, busqueda:busquedaNew!==null? busquedaNew:busqueda},
       signal: controller.signal
     }
     axios.get(url, config)
@@ -49,7 +49,6 @@ export default function Index ({BASE_URL}){
         setMarcas(resp.data.marcas);
         const paginasTotales = Math.ceil(resp.data.total / limit);
         setPaginasTotales(paginasTotales);
-        setActualizarLista(false);
       }
     })
     .catch((error)=>{if(!axios.isCancel) alert(error);})
@@ -57,7 +56,7 @@ export default function Index ({BASE_URL}){
 
   const handleChangePage = (newPage) => {
     setPage(newPage);
-    setActualizarLista(true);
+    cargarMarcas()
   };
 
   const handleChangeLimit = (event) => {
@@ -75,7 +74,7 @@ export default function Index ({BASE_URL}){
       .then((res) => {
         if (res.data.status === "ok"){
           alert("Guardado");
-          setActualizarLista(true);
+          cargarMarcas();
         } else {
           alert("Error")
         }
@@ -88,13 +87,7 @@ export default function Index ({BASE_URL}){
 
   useEffect(() => {
     init();
-  },[])
-
-  useEffect(() =>{
-    if(actualizarLista)
-      recargarMarcas();
-  },[actualizarLista])
-  
+  },[])  
 
   return(
     <div className='' style={{display:'flex', flexDirection:'row'}}>
@@ -120,7 +113,7 @@ export default function Index ({BASE_URL}){
               label="Buscar Marca"
               variant="outlined"
               value={busqueda}
-              onChange={(e) => {setBusqueda(e.target.value); setActualizarLista(true);}}
+              onChange={(e) => {setBusqueda(e.target.value); cargarMarcas(e.target.value);}}
             />
           </div>
           <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
@@ -139,40 +132,42 @@ export default function Index ({BASE_URL}){
                     <div className="Detalles">
                       <div style={{display:'flex', flexDirection:'row', 
                       alignItems:'center', justifyContent:'center', width:'100%'}}>
-                        <div style={{display:'flex', flex:1, 
-                        flexDirection:'row', width:'100%'}}>
-                          <div style={{flex:2}}>
-                            <strong> Marca: </strong> {marca.marca} - <strong>Productos ({productos?.length}) </strong>
+                        <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
+                          <Accion
+                            icono={expandir === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
+                            ayuda="Expandir"
+                            backgroundColor={"lightgrey"}
+                            disabled={false}
+                            onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
+                          />
+                        </div>
+                        <div className="Row" style={{flex:2, placeContent:'space-between'}}>
+                          <div style={{flex:1}}>
+                            <strong> Marca: </strong> {marca.marca} 
                           </div>
-                        </div>                     
-                        {/* LISTADO DE PRODUCTOS EXPANDIDO
-                          <ul style={{paddingLeft:25}}>
-                          {productos.map((producto, index2) => {
-                            return(
-                              <>
-                                <div key={index} className="Row" style={{placeItems:'center'}}>
-                                  <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
-                                    <Accion
-                                      icono={expandir === index2 ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
-                                      ayuda="Expandir"
-                                      backgroundColor={"lightgrey"}
-                                      disabled={false}
-                                      onClick={() =>{expandir === index2 ? setExpandir() : setExpandir(index2)}}
-                                    />
-                                  </div>
-                                  <div style={{flex:1}}>
-                                    {producto.producto}<strong>{" (" + producto.stock + ")"}</strong>
-                                  </div>
-                                </div>
-                              </>
-                            )
-                          })}
-                        </ul>*/}
-                      </div>
-                      <div className="Acciones">
-                        
+                          <div style={{flex:1}}>
+                            <strong>Productos ({productos?.length}) </strong>
+                          </div>
+                        </div>
+                      </div>  
+                      <div className="Acciones">                        
                       </div>
                     </div>                
+                    {expandir === index &&
+                      <div className="Preguntas">
+                        <div key={index} className="Row" style={{placeItems:'center'}}>
+                          <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
+                            {productos.map((producto, index2) => {
+                              return(
+                                <>
+                                {producto.producto}<strong>{" (" + producto.stock + ")"}</strong>                                    
+                                </>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    }       
                   </div>
                 </>
               );

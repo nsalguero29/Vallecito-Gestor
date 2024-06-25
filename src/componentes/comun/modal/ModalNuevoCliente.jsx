@@ -25,14 +25,17 @@ export default function ModalGenerado ({guardarCliente, salir, titulo}){
             value={datosCliente.documento}
             onChange={(e) => setDatoCliente('documento', e.target.value)}
           />
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker 
-              label="Fecha de Nacimiento" 
-              value={dayjs(datosCliente.fechaNac)}
-              views={['day', 'month', 'year']}
-              onChange={(e) => setDatoCliente('fechaNac', e)}              
-            />
-          </LocalizationProvider>
+          <div style={{flex:'flex', placeItems:'center', placeContent:'center'}}>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker               
+                label="Fecha de Nacimiento" 
+                value={dayjs(datosCliente.fechaNac)}
+                views={['day', 'month', 'year']}
+                onChange={(e) => setDatoCliente('fechaNac', e)}              
+              />
+            </LocalizationProvider>
+          </div>
+
         </div>
         <div className="Row">
           <TextField
