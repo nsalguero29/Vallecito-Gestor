@@ -8,6 +8,7 @@ import {Accion, Paginador, ModalNuevoCliente} from '../comun/Main';
 
 let controller = new AbortController();
 let oldController;
+dayjs.locale('es');
 
 export default function Index ({BASE_URL}){
 
@@ -16,20 +17,18 @@ export default function Index ({BASE_URL}){
 
   const [expandir, setExpandir] = useState();
   const [expandir2, setExpandir2] = useState();
-  const [actualizarLista, setActualizarLista] = useState(true);
 
   const [busqueda, setBusqueda] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [paginasTotales, setPaginasTotales] = useState(0);
 
-  const init = function(){
-    dayjs.locale('es');
-    recargarClientes();
+  const init = () => {    
+    cargarClientes();
   }
 
-  const recargarClientes = function(){
-    const url = BASE_URL + "clientes/listar";
+  const cargarClientes = (busquedaNew = null) => {
+    const url = BASE_URL + "clientes/buscar";
     
     oldController = controller;
     oldController.abort();
@@ -39,7 +38,7 @@ export default function Index ({BASE_URL}){
     const offset = (page-1)* limit;
     const config = {
       headers:{authorization: sessionStorage.getItem('token')},
-      params:{limit, offset, busqueda},
+      params:{limit, offset, busqueda:busquedaNew!==null? busquedaNew:busqueda},
       signal: controller.signal
     }
     axios.get(url, config)
@@ -47,8 +46,7 @@ export default function Index ({BASE_URL}){
       if(resp.data.status === "ok"){        
         setClientes(resp.data.clientes);
         const paginasTotales = Math.ceil(resp.data.total / limit);
-        setPaginasTotales(paginasTotales);
-        setActualizarLista(false);
+        setPaginasTotales(paginasTotales);        
       }
     })
     .catch((error)=>{if(!axios.isCancel) alert(error);})
@@ -56,7 +54,7 @@ export default function Index ({BASE_URL}){
 
   const handleChangePage = (newPage) => {
     setPage(newPage);
-    setActualizarLista(true);
+    cargarClientes();
   };
 
   const handleChangeLimit = (newLimit) => {
@@ -74,7 +72,7 @@ export default function Index ({BASE_URL}){
         console.log(res.data);
         if (res.data.status === "ok"){
           alert("Guardado");
-          setActualizarLista(true);
+          cargarClientes();
         } else {
           alert("Error")
         }
@@ -87,13 +85,7 @@ export default function Index ({BASE_URL}){
 
   useEffect(() => {
     init();
-  },[])
-
-  useEffect(() =>{
-    if(actualizarLista)
-      recargarClientes();
-  },[actualizarLista])
-  
+  },[]) 
 
   return(
     <div className='' style={{display:'flex', flexDirection:'column'}}>
@@ -117,7 +109,7 @@ export default function Index ({BASE_URL}){
               label="Buscar Documento"
               variant="outlined"
               value={busqueda}
-              onChange={(e) => {setBusqueda(e.target.value); setActualizarLista(true);}}
+              onChange={(e) => {setBusqueda(e.target.value); cargarClientes(e.target.value);}}
             />
           </div>
           <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
