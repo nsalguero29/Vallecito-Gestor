@@ -32,7 +32,7 @@ export default function Index ({BASE_URL}){
     cargarProductos();
   }
 
-  const cargarProductos = (busquedaNew = null) => {
+  const cargarProductos = (busquedaNew = null, pageNew = null, limitNew = null) => {
     const url = BASE_URL + "productos/buscar";
     
     oldController = controller;
@@ -40,17 +40,24 @@ export default function Index ({BASE_URL}){
     oldController = null;
     controller = new AbortController();
 
-    const offset = (page-1)* limit;
+    const limite = limitNew!==null?limitNew:limit;
+    const pag = pageNew!==null?pageNew:page;
+
+    const offset = (pag-1)* limite;
     const config = {
       headers:{authorization: sessionStorage.getItem('token')},
-      params:{limit, offset, busqueda:busquedaNew!==null? busquedaNew:busqueda},
+      params:{
+        limit: limite, 
+        offset, 
+        busqueda:busquedaNew!==null? busquedaNew:busqueda
+      },
       signal: controller.signal
     }
     axios.get(url, config)
     .then((resp)=>{
       if(resp.data.status === "ok"){
         setProductos(resp.data.productos);
-        const paginasTotales = Math.ceil(resp.data.total / limit);
+        const paginasTotales = Math.ceil(resp.data.total / limite);
         setPaginasTotales(paginasTotales);
       }
     })
@@ -85,14 +92,15 @@ export default function Index ({BASE_URL}){
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
 
-  const handleChangePage = (newPage) => {
+  const handleChangePage = (newPage, newLimit = null) => {
     setPage(newPage);
-    cargarProductos();
+    cargarProductos(null, newPage, newLimit);
   };
 
-  const handleChangeLimit = (newLimit) => {
+  const handleChangeLimit = (event) => {
+    const newLimit = event.target.value;
     setLimit(parseInt(newLimit, 10));
-    handleChangePage(1);
+    handleChangePage(1, newLimit);
   };
 
   const guardarProducto = (datosProducto) => {
