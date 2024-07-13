@@ -4,7 +4,7 @@ import {
 	Button, TextField
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Paginador, ModalNuevoCliente} from '../comun/Main';
+import {Accion, Paginador, ModalNuevaBicicleta} from '../comun/Main';
 
 let controller = new AbortController();
 let oldController;
@@ -13,7 +13,8 @@ dayjs.locale('es');
 export default function Index ({BASE_URL}){
 
   const [bicicletas, setBicicletas] = useState([]);
-  const [modalNuevoCliente, setModalNuevoCliente] = useState(false);
+  const [marcas, setMarcas] = useState([]);
+  const [modalNuevaBicicleta, setModalNuevaBicicleta] = useState(false);
 
   const [expandir, setExpandir] = useState();
   const [expandir2, setExpandir2] = useState();
@@ -24,6 +25,7 @@ export default function Index ({BASE_URL}){
   const [paginasTotales, setPaginasTotales] = useState(0);
 
   const init = () => {
+    cargarMarcas();
     cargarBicicletas();
   }
 
@@ -67,6 +69,20 @@ export default function Index ({BASE_URL}){
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
 
+  const cargarMarcas = () => {
+    const url = BASE_URL + "marcas/listar";
+    const config = {
+      headers:{authorization: sessionStorage.getItem('token')}      
+    }
+    axios.get(url, config)
+    .then((resp)=>{
+      if(resp.data.status === "ok"){
+        setMarcas(resp.data.marcas);
+      }
+    })
+    .catch((error)=>{if(!axios.isCancel) alert(error);})
+  }
+
   const guardarBicicleta = (datosBicicleta) => {
     if (window.confirm("¿Esta seguro que desea registrar una bicicleta?")){
       const url = BASE_URL + 'bicicletas/'
@@ -94,11 +110,12 @@ export default function Index ({BASE_URL}){
 
   return(
     <div className='' style={{display:'flex', flexDirection:'column'}}>
-      {modalNuevoCliente && 
-        <ModalNuevoCliente
-          titulo="Nuevo Cliente"
+      {modalNuevaBicicleta && 
+        <ModalNuevaBicicleta
+          titulo="Nueva Bicicleta"
           guardarBicicleta={(datosBicicleta)=>guardarBicicleta(datosBicicleta)}
-          salir={() => setModalNuevoCliente(false)}
+          marcasLista={marcas}
+          salir={() => setModalNuevaBicicleta(false)}
         />
       }
       <div style={{display:'flex', flex:1, flexDirection:'column'}}>
@@ -118,7 +135,7 @@ export default function Index ({BASE_URL}){
             />
           </div>
           <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
-            <Button variant="contained" className='Boton' onClick={() => { setModalNuevoCliente(true) }}>Nueva Bicicleta</Button>
+            <Button variant="contained" className='Boton' onClick={() => { setModalNuevaBicicleta(true) }}>Nueva Bicicleta</Button>
           </div>   
           <div style={{display:'flex', flex:1}}>
           </div>        
