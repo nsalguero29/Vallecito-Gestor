@@ -29,41 +29,45 @@ export default function Index ({BASE_URL}){
     cargarProveedores();
   }
 
-  const cargarProveedores = (busquedaNew = null) => {
+  const cargarProveedores = (busquedaNew = null, pageNew = null, limitNew = null) => {
     const url = BASE_URL + "proveedores/buscar";
     
     oldController = controller;
     oldController.abort();
     oldController = null;
     controller = new AbortController();
+    
+    if(limitNew!==null){
+      setLimit(limitNew);
+    }
+    if(pageNew!==null){
+      setPage(pageNew);
+    }
 
-    const offset = (page-1)* limit;
+    const limite = limitNew!==null?limitNew:limit;
+    const pag = pageNew!==null?pageNew:page;
+    const bus = busquedaNew!==null? busquedaNew:busqueda;
+    const offset = (pag-1)* limit;
+
     const config = {
       headers:{authorization: sessionStorage.getItem('token')},
-      params:{limit, offset, busqueda:busquedaNew!==null? busquedaNew:busqueda},
+      params:{
+        limit: limite, 
+        busqueda: bus,
+        offset
+      },
       signal: controller.signal
     }
     axios.get(url, config)
     .then((resp)=>{
       if(resp.data.status === "ok"){
         setProveedores(resp.data.proveedores);
-        const paginasTotales = Math.ceil(resp.data.total / limit);
+        const paginasTotales = Math.ceil(resp.data.total / limite);
         setPaginasTotales(paginasTotales);
-        setActualizarLista(false);
       }
     })
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
-
-  const handleChangePage = (newPage) => {
-    setPage(newPage);
-    cargarProveedores();
-  };
-
-  const handleChangeLimit = (newLimit) => {
-    setLimit(parseInt(newLimit, 10));
-    handleChangePage(1);
-  };
 
   const guardarProveedor = (datosProveedor) => {
     if (window.confirm("¿Esta seguro que desea registrar un proveedor?")){
@@ -228,8 +232,7 @@ export default function Index ({BASE_URL}){
           page={page}
           limit={limit}
           paginasTotales={paginasTotales}
-          handleChangePage={(nuevaPag)=>handleChangePage(nuevaPag)}
-          handleChangeLimit={(newLimit)=>handleChangeLimit(newLimit)}
+          cargar={(busqueda, newPage, newLimit)=>cargarProveedores(busqueda, newPage, newLimit)}
           opciones={[5,10,15,25,50]}
         />
       </div>

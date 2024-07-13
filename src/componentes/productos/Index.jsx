@@ -40,16 +40,24 @@ export default function Index ({BASE_URL}){
     oldController = null;
     controller = new AbortController();
 
+    if(limitNew!==null){
+      setLimit(limitNew);
+    }
+    if(pageNew!==null){
+      setPage(pageNew);
+    }
+
     const limite = limitNew!==null?limitNew:limit;
     const pag = pageNew!==null?pageNew:page;
-
+    const bus = busquedaNew!==null? busquedaNew:busqueda;
     const offset = (pag-1)* limite;
+
     const config = {
       headers:{authorization: sessionStorage.getItem('token')},
       params:{
         limit: limite, 
-        offset, 
-        busqueda:busquedaNew!==null? busquedaNew:busqueda
+        busqueda: bus,
+        offset
       },
       signal: controller.signal
     }
@@ -91,17 +99,6 @@ export default function Index ({BASE_URL}){
     })
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
-
-  const handleChangePage = (newPage, newLimit = null) => {
-    setPage(newPage);
-    cargarProductos(null, newPage, newLimit);
-  };
-
-  const handleChangeLimit = (event) => {
-    const newLimit = event.target.value;
-    setLimit(parseInt(newLimit, 10));
-    handleChangePage(1, newLimit);
-  };
 
   const guardarProducto = (datosProducto) => {
     if (window.confirm("¿Esta seguro que desea registrar un producto?")){
@@ -269,8 +266,7 @@ export default function Index ({BASE_URL}){
           page={page}
           limit={limit}
           paginasTotales={paginasTotales}
-          handleChangePage={(nuevaPag)=>handleChangePage(nuevaPag)}
-          handleChangeLimit={(newLimit)=>handleChangeLimit(newLimit)}
+          cargar={(busqueda, newPage, newLimit)=>cargarProductos(busqueda, newPage, newLimit)}
           opciones={[5,10,15,25,50]}
         />
       </div>

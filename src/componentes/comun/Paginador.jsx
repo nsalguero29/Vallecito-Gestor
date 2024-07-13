@@ -6,8 +6,17 @@ import {
   Pagination
 } from '@mui/material';
 
-export default function Paginador({page, limit , handleChangePage, 
-  paginasTotales, handleChangeLimit, opciones}){
+export default function Paginador({page, limit, cargar,
+  paginasTotales, opciones}){
+
+  const handleChangePage = (newPage, newLimit = null) => {
+    cargar(null, newPage, newLimit);
+  };
+
+  const handleChangeLimit = (event) => {
+    const newLimit = event.target.value;
+    handleChangePage(1, newLimit);
+  };
 
   return(
     <div style={{display:'flex', width:'100%', placeItems:'center', flexDirection:'column'}}>
@@ -16,7 +25,7 @@ export default function Paginador({page, limit , handleChangePage,
         count={paginasTotales} 
         shape="rounded" 
         page={page} 
-        onChange={(e, nuevaPag)=> handleChangePage(nuevaPag)}
+        onChange={(e, nuevaPag)=> {handleChangePage(nuevaPag)}}
         style={{marginTop:10}}
         />             
     </div>

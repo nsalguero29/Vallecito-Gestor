@@ -27,40 +27,45 @@ export default function Index ({BASE_URL}){
     cargarBicicletas();
   }
 
-  const cargarBicicletas = (busquedaNew = null) => {
+  const cargarBicicletas = (busquedaNew = null, pageNew = null, limitNew = null) => {
     const url = BASE_URL + "bicicletas/buscar";
     
     oldController = controller;
     oldController.abort();
     oldController = null;
     controller = new AbortController();
+    
+    if(limitNew!==null){
+      setLimit(limitNew);
+    }
+    if(pageNew!==null){
+      setPage(pageNew);
+    }
 
-    const offset = (page-1)* limit;
+    const limite = limitNew!==null?limitNew:limit;
+    const pag = pageNew!==null?pageNew:page;
+    const bus = busquedaNew!==null? busquedaNew:busqueda;
+    const offset = (pag-1)* limit;
+
     const config = {
       headers:{authorization: sessionStorage.getItem('token')},
-      params:{limit, offset, busqueda:busquedaNew!==null? busquedaNew:busqueda},
+      params:{
+        limit: limite, 
+        busqueda: bus,
+        offset
+      },
       signal: controller.signal
     }
     axios.get(url, config)
     .then((resp)=>{
       if(resp.data.status === "ok"){        
         setBicicletas(resp.data.bicicletas);
-        const paginasTotales = Math.ceil(resp.data.total / limit);
+        const paginasTotales = Math.ceil(resp.data.total / limite);
         setPaginasTotales(paginasTotales);
       }
     })
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
-
-  const handleChangePage = (newPage) => {
-    setPage(newPage);
-    cargarBicicletas();
-  };
-
-  const handleChangeLimit = (newLimit) => {
-    setLimit(parseInt(newLimit, 10));
-    handleChangePage(1);
-  };
 
   const guardarBicicleta = (datosBicicleta) => {
     if (window.confirm("¿Esta seguro que desea registrar una bicicleta?")){
@@ -245,8 +250,7 @@ export default function Index ({BASE_URL}){
           page={page}
           limit={limit}
           paginasTotales={paginasTotales}
-          handleChangePage={(nuevaPag)=>handleChangePage(nuevaPag)}
-          handleChangeLimit={(newLimit)=>handleChangeLimit(newLimit)}
+          cargar={(busqueda, newPage, newLimit)=>cargarBicicletas(busqueda, newPage, newLimit)}
           opciones={[10,15,25,50]}
         />
       </div>

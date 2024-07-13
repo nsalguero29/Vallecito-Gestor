@@ -29,7 +29,7 @@ export default function Index ({BASE_URL}){
     cargarMarcas();
   }
 
-  const cargarMarcas = (busquedaNew = null)=>{
+  const cargarMarcas = (busquedaNew = null, pageNew = null, limitNew = null)=>{
     const url = BASE_URL + "marcas/buscar";
     
     oldController = controller;
@@ -37,32 +37,37 @@ export default function Index ({BASE_URL}){
     oldController = null;
     controller = new AbortController();
 
-    const offset = (page-1)* limit;
+    if(limitNew!==null){
+      setLimit(limitNew);
+    }
+    if(pageNew!==null){
+      setPage(pageNew);
+    }
+
+    const limite = limitNew!==null?limitNew:limit;
+    const pag = pageNew!==null?pageNew:page;
+    const bus = busquedaNew!==null? busquedaNew:busqueda;
+    const offset = (pag-1)* limit;
+
     const config = {
       headers:{authorization: sessionStorage.getItem('token')},
-      params:{limit, offset, busqueda:busquedaNew!==null? busquedaNew:busqueda},
+      params:{
+        limit: limite, 
+        busqueda: bus,
+        offset
+      },
       signal: controller.signal
     }
     axios.get(url, config)
     .then((resp)=>{
       if(resp.data.status === "ok"){
         setMarcas(resp.data.marcas);
-        const paginasTotales = Math.ceil(resp.data.total / limit);
+        const paginasTotales = Math.ceil(resp.data.total / limite);
         setPaginasTotales(paginasTotales);
       }
     })
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
-
-  const handleChangePage = (newPage) => {
-    setPage(newPage);
-    cargarMarcas()
-  };
-
-  const handleChangeLimit = (event) => {
-    setLimit(parseInt(event.target.value, 10));
-    handleChangePage(1);
-  };
 
   const guardarMarca= () => {
     if (window.confirm("¿Esta seguro que desea guardar una nueva marca?")){
@@ -180,8 +185,7 @@ export default function Index ({BASE_URL}){
           page={page}
           limit={limit}
           paginasTotales={paginasTotales}
-          handleChangePage={(nuevaPag)=>handleChangePage(nuevaPag)}
-          handleChangeLimit={(newLimit)=>handleChangeLimit(newLimit)}
+          cargar={(busqueda, newPage, newLimit)=>cargarMarcas(busqueda, newPage, newLimit)}
           opciones={[5,15,25,50]}
         />
       </div>
