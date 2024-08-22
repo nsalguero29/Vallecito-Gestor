@@ -7,6 +7,7 @@ import Marcas from "./marcas/Index";
 import Productos from "./productos/Index";
 import Proveedores from "./proveedores/Index";
 import Arreglos from "./arreglos/Index";
+import Admin from "./admin/Index";
 
 export {
   Index,
@@ -17,5 +18,6 @@ export {
   Marcas,
   Productos,
   Proveedores,
-  Arreglos
+  Arreglos,
+  Admin
 }

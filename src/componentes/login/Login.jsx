@@ -14,7 +14,7 @@ export default function Login({logeo, BASE_URL}){
 
   const login = () =>{
     if(user != "" && pass != ""){
-      const url = BASE_URL + "/usuarios/login";
+      const url = BASE_URL + "usuarios/login";
       axios.post(url, {user, pass})
       .then((resp)=>{
         if(resp.data.status === "ok"){

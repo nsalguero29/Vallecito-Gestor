@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Arreglos, Bicicletas, Index, 
   Login, Logout, Clientes, 
-  Marcas, Productos, Proveedores } from './componentes/Main';
+  Marcas, Productos, Proveedores, Admin } from './componentes/Main';
 import { Header } from './componentes/comun/Main';
 import './App.css'
 import useEnv from './useEnv';
@@ -28,6 +28,7 @@ function App() {
           <Route path="/bicicletas" element={<Bicicletas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
           <Route path="/clientes" element={<Clientes logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
           <Route path="/login" element={<Login logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
+          <Route path="/admin" element={<Admin logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/>
           <Route path="/logout" element={<Logout logout={()=>logeo(false)} />}/>
           <Route path="/" element={<Index />}/>
         </Routes>

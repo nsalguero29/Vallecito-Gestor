@@ -30,10 +30,16 @@ export default function Header({logged}){
   const derecha = () => {
     if(logged) {
       return(
+        <>
+        <Opcion
+          ruta="/admin"
+          seleccionada={false}
+          >Admin</Opcion>
         <Opcion
           ruta="/logout"
           seleccionada={false}
-        >Cerrar Sesión</Opcion>
+          >Cerrar Sesión</Opcion>
+        </>
       )
     } else {
       return (

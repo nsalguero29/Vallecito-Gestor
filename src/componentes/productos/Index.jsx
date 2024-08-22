@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import {Accion, Paginador, ModalNuevoProducto} from '../comun/Main';
+import {cargarMarcas, cargarProveedores} from "../comun/Funciones";
 
 let controller = new AbortController();
 let oldController;
@@ -27,8 +28,9 @@ export default function Index ({BASE_URL}){
   const [paginasTotales, setPaginasTotales] = useState(0);
 
   const init = () => {
-    cargarProveedores();
-    cargarMarcas();
+    var proveedores = cargarProveedores(BASE_URL)
+    setProveedores(proveedores);
+    setMarcas(cargarMarcas(BASE_URL));
     cargarProductos();
   }
 
@@ -70,35 +72,7 @@ export default function Index ({BASE_URL}){
       }
     })
     .catch((error)=>{if(!axios.isCancel) alert(error);})
-  }
-
-  const cargarProveedores = () => {
-    const url = BASE_URL + "proveedores/listar";
-    const config = {
-      headers:{authorization: sessionStorage.getItem('token')}      
-    }
-    axios.get(url, config)
-    .then((resp)=>{
-      if(resp.data.status === "ok"){
-        setProveedores(resp.data.proveedores);
-      }
-    })
-    .catch((error)=>{if(!axios.isCancel) alert(error);})
-  }
-
-  const cargarMarcas = () => {
-    const url = BASE_URL + "marcas/listar";
-    const config = {
-      headers:{authorization: sessionStorage.getItem('token')}      
-    }
-    axios.get(url, config)
-    .then((resp)=>{
-      if(resp.data.status === "ok"){
-        setMarcas(resp.data.marcas);
-      }
-    })
-    .catch((error)=>{if(!axios.isCancel) alert(error);})
-  }
+  }  
 
   const guardarProducto = (datosProducto) => {
     if (window.confirm("¿Esta seguro que desea registrar un producto?")){
