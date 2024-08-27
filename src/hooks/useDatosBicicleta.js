@@ -6,6 +6,7 @@ export function useDatosBicicleta (){
   const [color, setColor] = useState("");
   const [marcaId, setMarcaId] = useState();
   const [modeloId, setModeloId] = useState();
+  const [clienteId, setClienteId] = useState();
   const [observacion, setObservacion] = useState("");
 
   const setDatoBicicleta = (tipo, valor) => {
@@ -13,14 +14,14 @@ export function useDatosBicicleta (){
       case 'cuadro': return (setCuadro(valor));
       case 'color': return (setColor(valor));      
       case 'marcaId': return (setMarcaId(valor));
-      case 'modeloId': return (setModeloId(valor));      
+      case 'modeloId': return (setModeloId(valor));
+      case 'clienteId': return (setClienteId(valor));      
       case 'observacion': return (setObservacion(valor));
       default: return ("Error")
     }
   }
 
-  return ([{ cuadro, color, 
-    observacion,
-    modeloId, marcaId
+  return ([{ cuadro, color, observacion,
+    modeloId, marcaId, clienteId
   }, setDatoBicicleta]);
 }

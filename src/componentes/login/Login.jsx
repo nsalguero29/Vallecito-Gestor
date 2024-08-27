@@ -21,7 +21,7 @@ export default function Login({logeo, BASE_URL}){
           sessionStorage.setItem('datos', JSON.stringify(resp.data.user))
           sessionStorage.setItem('token', resp.data.token)
           logeo();
-          navigate("/entrega");
+          navigate("/");
         } 
         else {
           alert(resp.data.error);

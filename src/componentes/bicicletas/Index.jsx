@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import {Accion, Paginador, ModalNuevaBicicleta} from '../comun/Main';
+import {cargarMarcas, cargarClientes} from '../comun/Funciones';
 
 let controller = new AbortController();
 let oldController;
@@ -14,6 +15,7 @@ export default function Index ({BASE_URL}){
 
   const [bicicletas, setBicicletas] = useState([]);
   const [marcas, setMarcas] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [modalNuevaBicicleta, setModalNuevaBicicleta] = useState(false);
 
   const [expandir, setExpandir] = useState();
@@ -25,8 +27,15 @@ export default function Index ({BASE_URL}){
   const [paginasTotales, setPaginasTotales] = useState(0);
 
   const init = () => {
-    cargarMarcas();
-    cargarBicicletas();
+    cargarMarcas(BASE_URL)
+    .then((marcas) => {
+      setMarcas(marcas);
+      cargarClientes(BASE_URL)
+      .then((clientes) => {
+        setClientes(clientes);
+        cargarBicicletas();
+      });
+    });
   }
 
   const cargarBicicletas = (busquedaNew = null, pageNew = null, limitNew = null) => {
@@ -69,19 +78,7 @@ export default function Index ({BASE_URL}){
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
 
-  const cargarMarcas = () => {
-    const url = BASE_URL + "marcas/listar";
-    const config = {
-      headers:{authorization: sessionStorage.getItem('token')}      
-    }
-    axios.get(url, config)
-    .then((resp)=>{
-      if(resp.data.status === "ok"){
-        setMarcas(resp.data.marcas);
-      }
-    })
-    .catch((error)=>{if(!axios.isCancel) alert(error);})
-  }
+  
 
   const guardarBicicleta = (datosBicicleta) => {
     if (window.confirm("¿Esta seguro que desea registrar una bicicleta?")){
@@ -115,6 +112,7 @@ export default function Index ({BASE_URL}){
           titulo="Nueva Bicicleta"
           guardarBicicleta={(datosBicicleta)=>guardarBicicleta(datosBicicleta)}
           marcasLista={marcas}
+          clientesLista={clientes}
           salir={() => setModalNuevaBicicleta(false)}
         />
       }

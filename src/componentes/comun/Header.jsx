@@ -57,14 +57,6 @@ export default function Header({logged}){
         <img src={Logo} alt="Logo" style={{width:"100%"}}/> 
       </Link>
       <div className="Opciones">
-        {MENU.map((link, index) => 
-          <Opcion
-            key={index}
-            ruta={link.ruta}
-            seleccionada={location.pathname === link.ruta}
-          >{link.titulo}</Opcion>
-        )}
-
         {logged && MENU.map((link, index) => 
           <Opcion
             key={index}
