@@ -165,7 +165,9 @@ export default function Index ({BASE_URL}){
                             {productos.map((producto, index2) => {
                               return(
                                 <>
-                                {producto.producto}<strong>{" (" + producto.stock + ")"}</strong>                                    
+                                <div key={producto.id}>
+                                  {producto.producto}<strong>{" (" + producto.stock + ")"}</strong>                                    
+                                </div>
                                 </>
                               )
                             })}

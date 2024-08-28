@@ -6,7 +6,7 @@ import {
   } from '@mui/material';
 import { useDatosProducto } from '../../../hooks/useDatosProducto';
 
-export default function ModalGenerado ({guardarProducto, proveedoresLista,
+export default function ModalGenerado ({guardarProducto, proveedoresLista, tiposProductoLista,
   marcasLista, salir, titulo}){
 
     const [datosProducto, setDatoProducto] = useDatosProducto(null);
@@ -14,16 +14,6 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista,
     return (
         <BaseModal titulo={titulo} salir={()=>salir()}>
         <div className='Formulario'style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
-          <div className="Row">
-            <TextField
-              style={{ flex: 1, margin: 10 }}
-              className="Dato"
-              label="Producto"
-              variant="outlined"
-              value={datosProducto.producto}
-              onChange={(e) => setDatoProducto("producto", e.target.value)}
-            />
-          </div>
           <div className="Row">
             <Autocomplete
               value={datosProducto.proveedorId}
@@ -43,6 +33,28 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista,
               variant="outlined"
               value={datosProducto.codigoProveedor}
               onChange={(e) => setDatoProducto('codigoProveedor', e.target.value)}
+            />
+          </div>
+          <div className="Row">
+            <TextField
+              style={{ flex: 3, margin: 10 }}
+              className="Dato"
+              label="Producto"
+              variant="outlined"
+              value={datosProducto.producto}
+              onChange={(e) => setDatoProducto("producto", e.target.value)}
+            />
+            <Autocomplete
+              value={datosProducto.tiposProductoId}
+              onChange={(e,n) => {setDatoProducto('tiposProductoId', n)}}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              options={tiposProductoLista}
+              getOptionLabel={(option) => option.tipoProducto}
+              noOptionsText="Sin resultados"
+              size="medium"
+              style={{flex: 2, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
+              renderInput={(params) => <TextField {...params} label="Tipo Producto"/>}
+              multiple={true}
             />
           </div>
           <div className="Row" >  
