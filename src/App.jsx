@@ -1,5 +1,5 @@
 import { useState, useEffect} from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import { Arreglos, Bicicletas, Index, 
   Login, Logout, Clientes, 
   Marcas, Productos, Proveedores, Admin } from './componentes/Main';
@@ -11,6 +11,7 @@ function App() {
 
   const [BASE_URL, BASENAME] = useEnv();
   const [logged, setLogged] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const logeo = (value) => {
     setLogged(value);
@@ -20,20 +21,34 @@ function App() {
     return sessionStorage.getItem('token')!== null;
   }
 
+  const checkIsAdmin = () =>{
+    if(sessionStorage.getItem('datos') !== null){
+      const datos = JSON.parse(sessionStorage.getItem('datos'));
+      return datos.tipo === 1;
+    }else{
+      return false;
+    }
+  }
+
   useEffect(()=>{
-    setLogged(checkLogged());
+    setLogged(checkLogged());    
   },[])
+  
+  useEffect(()=>{    
+    setIsAdmin(checkIsAdmin());
+  },[logged])
 
   return (
     <BrowserRouter basename={BASENAME}>
       <div className='App'>
-        <Header logged={logged}/>
+        <Header logged={logged} isAdmin={isAdmin}/>
         <Routes>
-            <Route path="/login" element={<Login logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/>                  
-            <Route path="/" Component={ () =>{
+            <Route exact path="/" Component={ () =>{
               if(checkLogged()) return <Index />
               else return <Navigate to="/login" replace={true}/>
             }}/>
+            
+            <Route path="/login" element={<Login logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/>                  
             
             <Route path="/logout" Component={ () =>{
               if(checkLogged()) return <Logout logout={()=>logeo(false)} />
