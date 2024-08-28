@@ -1,7 +1,7 @@
 import React from 'react';
 import  './css/Accion.css';
 import './styles.css';
-
+//{icono==='keyboard_arrow_up'?"▲":"▼"}
 export default function Accion({fontSize, backgroundColor, disabled, icono, ayuda, onClick}){
 
   return(
@@ -16,7 +16,7 @@ export default function Accion({fontSize, backgroundColor, disabled, icono, ayud
       }}
       onClick={() => !disabled && onClick()}
       title={ayuda}
-    > {icono==='keyboard_arrow_up'?"▲":"▼"} </span>
+    >{icono}</span>
   )
 
 }

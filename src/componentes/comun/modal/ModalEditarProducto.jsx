@@ -7,7 +7,7 @@ import {
 import { useDatosProducto } from '../../../hooks/useDatosProducto';
 
 export default function ModalGenerado ({guardarProducto, proveedoresLista, tiposProductoLista,
-  marcasLista, salir, titulo}){
+  marcasLista, salir, titulo, datos}){
 
     const [datosProducto, setDatoProducto] = useDatosProducto(null);
 
@@ -16,8 +16,8 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
         <div className='Formulario'style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
           <div className="Row">
             <Autocomplete
-              value={datosProducto.proveedorId}
-              onChange={(e,n) => {setDatoProducto('proveedorId', n)}}
+              value={datos.proveedor}
+              onChange={(e,n) => {datos.proveedor = n}}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               options={proveedoresLista}
               getOptionLabel={(option) => option.proveedor}
@@ -31,8 +31,8 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
               className='Dato'
               label="Codigo Proveedor"
               variant="outlined"
-              value={datosProducto.codigoProveedor}
-              onChange={(e) => setDatoProducto('codigoProveedor', e.target.value)}
+              value={datos.codigoProveedor}
+              onChange={(e) => datos.codigoProveedor = e.target.value}
             />
           </div>
           <div className="Row">
@@ -41,12 +41,12 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
               className="Dato"
               label="Producto"
               variant="outlined"
-              value={datosProducto.producto}
-              onChange={(e) => setDatoProducto("producto", e.target.value)}
+              value={datos.producto}
+              onChange={(e) => datos.producto = e.target.value}
             />
             <Autocomplete
-              value={datosProducto.tiposProductoId}
-              onChange={(e,n) => {setDatoProducto('tiposProductoId', n)}}
+              value={datos.tiposProducto}
+              onChange={(e,n) => {datos.tiposProducto = n}}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               options={tiposProductoLista}
               getOptionLabel={(option) => option.tipoProducto}
@@ -59,8 +59,8 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
           </div>
           <div className="Row" >  
             <Autocomplete
-              value={datosProducto.marcaId}
-              onChange={(e,n) => {setDatoProducto('marcaId', n)}}
+              value={datos.marca}
+              onChange={(e,n) => {console.log(datos.marca);datos.marca = n}}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               options={marcasLista}
               getOptionLabel={(option) => option.marca}
@@ -74,16 +74,16 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
               className='Dato'
               label="Stock"
               variant="outlined"
-              value={datosProducto.stock}
-              onChange={(e) => setDatoProducto('stock', e.target.value)}
+              value={datos.stock}
+              onChange={(e) => datos.stock = e.target.value}
             />
             <TextField
               style={{ flex: 2, margin: 10 }}
               className='Dato'
               label="Precio Lista"
               variant="outlined"
-              value={datosProducto.precioLista}
-              onChange={(e) => setDatoProducto('precioLista', e.target.value)}
+              value={datos.precioLista}
+              onChange={(e) => datos.precioLista = e.target.value}
             />
           </div>
           <div className="Row"> 
@@ -92,12 +92,12 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
               className='Dato'
               label="Observacion"
               variant="outlined"
-              value={datosProducto.observacion}
-              onChange={(e) => setDatoProducto('observacion', e.target.value)}
+              value={datos.observacion}
+              onChange={(e) => datos.observacion = e.target.value}
             />
           </div>        
           <div className='Botonera'>
-            <Button variant="contained" className='Boton' onClick={() => { salir(); guardarProducto(datosProducto) }}>Guardar Nuevo Producto</Button>
+            <Button variant="contained" className='Boton' onClick={() => { salir(); guardarProducto(datos, true) }}>Guardar Producto</Button>
           </div> 
         </div>
         </BaseModal>

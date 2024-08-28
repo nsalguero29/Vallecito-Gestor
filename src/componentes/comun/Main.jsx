@@ -8,6 +8,8 @@ import ModalNuevaMarca from "./modal/ModalNuevaMarca";
 import ModalNuevoCliente from "./modal/ModalNuevoCliente";
 import ModalNuevoProducto from "./modal/ModalNuevoProducto";
 import ModalNuevoProveedor from "./modal/ModalNuevoProveedor";
+import ModalEditarProducto from "./modal/ModalEditarProducto";
+
 
 export { 
     Accion, 
@@ -18,5 +20,6 @@ export {
     ModalNuevoCliente,
     ModalNuevoProducto,
     ModalNuevoProveedor,
-    ModalNuevaBicicleta
+    ModalNuevaBicicleta,
+    ModalEditarProducto
 };

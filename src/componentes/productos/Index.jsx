@@ -5,10 +5,11 @@ import {
 	Button, TextField, Autocomplete
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Paginador, ModalNuevoProducto} from '../comun/Main';
+import {Accion, Paginador, ModalNuevoProducto, ModalEditarProducto} from '../comun/Main';
 
 let controller = new AbortController();
 let oldController;
+let datos = [];
 dayjs.locale('es');
 
 export default function Index ({BASE_URL}){
@@ -18,6 +19,7 @@ export default function Index ({BASE_URL}){
   const [marcas, setMarcas] = useState([]);
   const [tiposProducto, setTiposProducto] = useState([]);
   const [modalNuevoProducto, setModalNuevoProducto] = useState(false);
+  const [modalEditarProducto, setModalEditarProducto] = useState(false); 
 
   const [expandir, setExpandir] = useState();
   const [expandir2, setExpandir2] = useState();
@@ -121,7 +123,7 @@ export default function Index ({BASE_URL}){
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }  
 
-  const guardarProducto = (datosProducto) => {
+  const guardarProducto = (datosProducto, editar = false) => {
     if (window.confirm("¿Esta seguro que desea registrar un producto?")){
       const url = BASE_URL + 'productos/'
       const config = {headers:{authorization:sessionStorage.getItem('token')}};
@@ -132,7 +134,12 @@ export default function Index ({BASE_URL}){
         tipos.push(element.id);
       });
       datosProducto.tiposProductoId = tipos;
-      axios.post(url, datosProducto, config)
+
+      if(editar)
+        axios.put(url, datosProducto, config)
+      else
+        axios.post(url, datosProducto, config)
+
       .then((res) => {
         if (res.data.status === "ok"){
           alert("Guardado");
@@ -145,6 +152,11 @@ export default function Index ({BASE_URL}){
         alert(error)
       })
     }
+  }
+
+  const editar = (producto) =>{
+    datos = producto;
+    setModalEditarProducto(true);
   }
 
   useEffect(() => {
@@ -161,6 +173,18 @@ export default function Index ({BASE_URL}){
           tiposProductoLista={tiposProducto}
           guardarProducto={(datosProducto)=>guardarProducto(datosProducto)}
           salir={() => setModalNuevoProducto(false)}
+        />
+      }
+
+      {modalEditarProducto && 
+        <ModalEditarProducto
+          titulo="Editar Producto"
+          proveedoresLista={proveedores}
+          marcasLista={marcas}
+          tiposProductoLista={tiposProducto}
+          guardarProducto={(datosProducto, editar)=>guardarProducto(datosProducto, editar)}
+          salir={() => setModalEditarProducto(false)}
+          datos={datos}
         />
       }
       
@@ -226,7 +250,13 @@ export default function Index ({BASE_URL}){
                       </div>
                     </div>
                     <div className="Acciones">
-                      
+                      <Accion
+                        icono="edit"
+                        ayuda="Editar"
+                        backgroundColor="#00a5e5"
+                        disabled={false}
+                        onClick={() => editar(producto)}
+                      />
                     </div>
                   </div>
                   {expandir === index &&

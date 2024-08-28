@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export function useDatosProducto (){
   
+  const [id, setId] = useState("");
   const [producto, setProducto] = useState("");
   const [codigoProveedor, setCodigoProveedor] = useState("");
   const [stock, setStock] = useState();
@@ -13,6 +14,7 @@ export function useDatosProducto (){
 
   const setDatoProducto = (tipo, valor) => {
     switch (tipo) {
+      case 'id': return (setId(valor));
       case 'producto': return (setProducto(valor));
       case 'codigoProveedor': return (setCodigoProveedor(valor));
       case 'stock': return (setStock(valor));
@@ -25,7 +27,7 @@ export function useDatosProducto (){
     }
   }
 
-  return ([{ producto, codigoProveedor, 
+  return ([{ id, producto, codigoProveedor, 
     stock, precioLista, observacion,
     proveedorId, marcaId, tiposProductoId
   }, setDatoProducto]);
