@@ -2,11 +2,11 @@ import { useState } from "react";
 
 export function useDatosProducto (){
   
-  const [id, setId] = useState("");
+  const [id, setId] = useState();
   const [producto, setProducto] = useState("");
   const [codigoProveedor, setCodigoProveedor] = useState("");
-  const [stock, setStock] = useState();
-  const [precioLista, setPrecioLista] = useState("");
+  const [stock, setStock] = useState(0);
+  const [precioLista, setPrecioLista] = useState(0);
   const [observacion, setObservacion] = useState("");
   const [proveedorId, setProveedorId] = useState();
   const [marcaId, setMarcaId] = useState();

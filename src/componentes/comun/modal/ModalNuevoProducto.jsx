@@ -75,7 +75,8 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
               label="Stock"
               variant="outlined"
               value={datosProducto.stock}
-              onChange={(e) => setDatoProducto('stock', e.target.value)}
+              type="number"
+              onChange={(e) => setDatoProducto('stock', e.target.valueAsNumber)}
             />
             <TextField
               style={{ flex: 2, margin: 10 }}
@@ -83,7 +84,11 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
               label="Precio Lista"
               variant="outlined"
               value={datosProducto.precioLista}
-              onChange={(e) => setDatoProducto('precioLista', e.target.value)}
+              type="number"
+              sinputProps={{
+                step: "1"
+              }}
+              onChange={(e) => setDatoProducto('precioLista', e.target.valueAsNumber)}
             />
           </div>
           <div className="Row"> 

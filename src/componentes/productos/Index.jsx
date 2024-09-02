@@ -145,6 +145,7 @@ export default function Index ({BASE_URL}){
           alert("Guardado");
           cargarProductos();
         } else {
+          console.log(res.data);
           alert("Error")
         }
       })
