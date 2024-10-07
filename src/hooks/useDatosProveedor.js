@@ -6,6 +6,7 @@ export function useDatosProveedor (){
   const [nombreContacto, setnombreContacto] = useState("");
   const [direccion, setDireccion] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [sitioWeb, setSitioWeb] = useState("");
   const [email, setEmail] = useState("");
   const [instagram, setInstagram] = useState("");
 
@@ -15,6 +16,7 @@ export function useDatosProveedor (){
       case 'nombreContacto': return (setnombreContacto(valor));
       case 'direccion': return (setDireccion(valor));
       case 'telefono': return (setTelefono(valor));
+      case 'sitioWeb': return (setSitioWeb(valor));
       case 'email': return (setEmail(valor));
       case 'instagram': return (setInstagram(valor));
       default: return ("Error")
@@ -22,6 +24,6 @@ export function useDatosProveedor (){
   }
 
   return ([{ proveedor, nombreContacto, 
-    direccion, telefono, email, instagram
+    direccion, telefono, sitioWeb, email, instagram
   }, setDatoProveedor]);
 }

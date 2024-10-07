@@ -18,8 +18,8 @@ export default function Login({logeo, BASE_URL}){
       axios.post(url, {user, pass})
       .then((resp)=>{
         if(resp.data.status === "ok"){
-          sessionStorage.setItem('datos', JSON.stringify(resp.data.user))
-          sessionStorage.setItem('token', resp.data.token)
+          sessionStorage.setItem('datos', JSON.stringify(resp.data.datos));
+          sessionStorage.setItem('token', resp.data.token);
           logeo();
           navigate("/");
         } 

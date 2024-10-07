@@ -25,22 +25,33 @@ function Opcion ({ruta, seleccionada, children}){
   )
 }
 
-export default function Header({logged}){
+export default function Header({logged, isAdmin}){
   const location = useLocation();
   const derecha = () => {
     if(logged) {
-      return(
-        <>
-        <Opcion
-          ruta="/admin"
-          seleccionada={false}
-          >Admin</Opcion>
-        <Opcion
-          ruta="/logout"
-          seleccionada={false}
-          >Cerrar Sesión</Opcion>
-        </>
-      )
+      if(isAdmin){
+        return(
+          <>
+            <Opcion
+              ruta="/admin"
+              seleccionada={false}
+            >Admin</Opcion>
+            <Opcion
+              ruta="/logout"
+              seleccionada={false}
+            >Cerrar Sesión</Opcion>
+          </>
+        )
+      }else{
+        return(
+          <>
+            <Opcion
+              ruta="/logout"
+              seleccionada={false}
+            >Cerrar Sesión</Opcion>
+          </>
+        )
+      }
     } else {
       return (
         <Opcion

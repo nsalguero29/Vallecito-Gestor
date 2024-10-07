@@ -8,7 +8,6 @@ const cargarMarcas = (BASE_URL) => {
     }
     axios.get(url, config)
     .then((resp)=>{   
-      console.log({resp});
       if(resp.data.status === "ok"){
         resolve(resp.data.marcas);
       }
@@ -48,7 +47,6 @@ const cargarProveedores = (BASE_URL) => {
     axios.get(url, config)
     .then((resp)=>{
       if(resp.data.status === "ok"){
-        console.log(resp.data.proveedores);
         resolve (resp.data.proveedores);
       }
     })

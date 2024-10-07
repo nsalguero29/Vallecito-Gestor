@@ -18,7 +18,6 @@ export default function Index ({BASE_URL}){
 
   const [expandir, setExpandir] = useState();
   const [expandir2, setExpandir2] = useState();
-  const [actualizarLista, setActualizarLista] = useState(true);
 
   const [busqueda, setBusqueda] = useState("");
   const [page, setPage] = useState(1);
@@ -156,7 +155,7 @@ export default function Index ({BASE_URL}){
                           <strong> Telefono: </strong>  {proveedor.telefono} 
                         </div>
                         <div style={{flex:1}}>
-                          <strong> Productos: </strong> {productos.length}
+                          <strong> Productos {" (" + productos.length + ")"}</strong>    
                         </div>
                       </div>
                     </div>
