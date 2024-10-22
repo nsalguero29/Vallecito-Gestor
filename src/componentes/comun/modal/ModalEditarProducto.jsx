@@ -5,19 +5,28 @@ import {
     Autocomplete
   } from '@mui/material';
 import { useDatosProducto } from '../../../hooks/useDatosProducto';
+import { useEffect, useState } from 'react';
 
 export default function ModalGenerado ({guardarProducto, proveedoresLista, tiposProductoLista,
   marcasLista, salir, titulo, datos}){
 
     const [datosProducto, setDatoProducto] = useDatosProducto(null);
 
+    const [editado, setEditado] = useState(false);
+
     return (
-        <BaseModal titulo={titulo} salir={()=>salir()}>
+        <BaseModal titulo={titulo} salir={()=>{
+          if(editado){
+            if(confirm("¿salir sin guardar?")) salir();
+            else {salir(); guardarProducto(datos, true)}
+          } 
+          else salir();
+        }}>
         <div className='Formulario'style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
           <div className="Row">
             <Autocomplete
               value={datos.proveedor}
-              onChange={(e,n) => {datos.proveedor = n}}
+              onChange={(e,n) => { setEditado(true); datos.proveedor = n}}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               options={proveedoresLista}
               getOptionLabel={(option) => option.proveedor}
