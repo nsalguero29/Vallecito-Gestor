@@ -115,6 +115,7 @@ export default function Index ({BASE_URL}){
     axios.get(url, config)
     .then((resp)=>{
       if(resp.data.status === "ok"){
+        console.log(resp.data.productos)
         setProductos(resp.data.productos);
         const paginasTotales = Math.ceil(resp.data.total / limite);
         setPaginasTotales(paginasTotales);
@@ -232,6 +233,9 @@ export default function Index ({BASE_URL}){
                       <div style={{display:'flex', flex:2, 
                       flexDirection:'row', width:'100%'}}>
                         <div className="Row" style={{flex:2, placeContent:'space-between', placeItems:'center'}}>
+                        <div style={{flex:1}}>
+                            <strong> Codigo: </strong> {producto.codigoProveedor} 
+                          </div>
                           <div style={{flex:1}}>
                             <strong> Producto: </strong> {producto.producto} 
                           </div>

@@ -50,24 +50,23 @@ function App() {
               
               <Route path="/logout" element={ <Logout logout={()=>logeo(false)} /> }/>
 
-              <Route path="/productos" Component={ <Productos logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+              <Route path="/productos" element={ <Productos logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
               
-              <Route path="/marcas" Component={ <Marcas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+              <Route path="/marcas" element={ <Marcas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/proveedores" Component={ <Proveedores logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+              <Route path="/proveedores" element={ <Proveedores logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/bicicletas" Component={ <Bicicletas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+              <Route path="/bicicletas" element={ <Bicicletas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/clientes" Component={ <Clientes logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+              <Route path="/clientes" element={ <Clientes logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/admin" Component={ <Admin logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+              <Route path="/admin" element={ <Admin logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/arreglos" Component={ <Arreglos logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+              <Route path="/arreglos" element={ <Arreglos logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
             </>
             :
-            <Navigate to="/login" replace={true}/>
-            }                 
-            
+              <Route path="/" element={<Login logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
+            }
         </Routes>
       </div>
     </BrowserRouter>

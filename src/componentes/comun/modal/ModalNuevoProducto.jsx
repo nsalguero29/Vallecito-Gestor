@@ -16,8 +16,8 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
         <div className='Formulario'style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
           <div className="Row">
             <Autocomplete
-              value={datosProducto.proveedorId}
-              onChange={(e,n) => {setDatoProducto('proveedorId', n)}}
+              value={datosProducto.proveedor}
+              onChange={(e,n) => {setDatoProducto('proveedor', n)}}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               options={proveedoresLista}
               getOptionLabel={(option) => option.proveedor}
@@ -45,8 +45,8 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
               onChange={(e) => setDatoProducto("producto", e.target.value)}
             />
             <Autocomplete
-              value={datosProducto.tiposProductoId}
-              onChange={(e,n) => {setDatoProducto('tiposProductoId', n)}}
+              value={datosProducto.tiposProducto}
+              onChange={(e,n) => {setDatoProducto('tiposProducto', n)}}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               options={tiposProductoLista}
               getOptionLabel={(option) => option.tipoProducto}
@@ -59,8 +59,8 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
           </div>
           <div className="Row" >  
             <Autocomplete
-              value={datosProducto.marcaId}
-              onChange={(e,n) => {setDatoProducto('marcaId', n)}}
+              value={datosProducto.marca}
+              onChange={(e,n) => {setDatoProducto('marca', n)}}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               options={marcasLista}
               getOptionLabel={(option) => option.marca}
@@ -85,7 +85,7 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
               variant="outlined"
               value={datosProducto.precioLista}
               type="number"
-              sinputProps={{
+              inputProps={{
                 step: "1"
               }}
               onChange={(e) => setDatoProducto('precioLista', e.target.valueAsNumber)}

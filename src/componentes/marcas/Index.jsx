@@ -132,51 +132,47 @@ export default function Index ({BASE_URL}){
             marcas.map((marca, index)=>{
               const productos = marca.productos;
               return (
-                <>
-                  <div key={marca.id} className="Listado">
-                    <div className="Detalles">
-                      <div style={{display:'flex', flexDirection:'row', 
-                      alignItems:'center', justifyContent:'center', width:'100%'}}>
-                        <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
-                          <Accion
-                            icono={expandir === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
-                            ayuda="Expandir"
-                            backgroundColor={"lightgrey"}
-                            disabled={false}
-                            onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
-                          />
-                        </div>
-                        <div className="Row" style={{flex:2, placeContent:'space-between'}}>
-                          <div style={{flex:1}}>
-                            <strong> Marca: </strong> {marca.marca} 
-                          </div>
-                          <div style={{flex:1}}>
-                            <strong>Productos ({productos?.length}) </strong>
-                          </div>
-                        </div>
-                      </div>  
-                      <div className="Acciones">                        
+                <div key={marca.id} className="Listado">
+                  <div className="Detalles">
+                    <div style={{display:'flex', flexDirection:'row', 
+                    alignItems:'center', justifyContent:'center', width:'100%'}}>
+                      <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
+                        <Accion
+                          icono={expandir === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
+                          ayuda="Expandir"
+                          backgroundColor={"lightgrey"}
+                          disabled={false}
+                          onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
+                        />
                       </div>
-                    </div>                
-                    {expandir === index &&
-                      <div className="Preguntas">
-                        <div key={index} className="Row" style={{placeItems:'center'}}>
-                          <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
-                            {productos.map((producto, index2) => {
-                              return(
-                                <>
-                                <div key={producto.id}>
-                                  {producto.producto}<strong>{" (" + producto.stock + ")"}</strong>                                    
-                                </div>
-                                </>
-                              )
-                            })}
-                          </div>
+                      <div className="Row" style={{flex:2, placeContent:'space-between'}}>
+                        <div style={{flex:1}}>
+                          <strong> Marca: </strong> {marca.marca} 
+                        </div>
+                        <div style={{flex:1}}>
+                          <strong>Productos ({productos?.length}) </strong>
                         </div>
                       </div>
-                    }       
-                  </div>
-                </>
+                    </div>  
+                    <div className="Acciones">                        
+                    </div>
+                  </div>                
+                  {expandir === index &&
+                    <div className="Preguntas">
+                      <div key={index} className="Row" style={{placeItems:'center'}}>
+                        <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
+                          {productos.map((producto, index2) => {
+                            return(
+                              <div key={producto.id}>
+                                {producto.producto}<strong>{" (" + producto.stock + ")"}</strong>                                    
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  }       
+                </div>
               );
             })
             :
