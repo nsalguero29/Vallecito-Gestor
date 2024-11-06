@@ -7,6 +7,11 @@ import { Header } from './componentes/comun/Main';
 import './App.css'
 import useEnv from './useEnv';
 
+import React from 'react';
+import { Slide, ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
+
 function App() {
 
   const [BASE_URL, BASENAME] = useEnv();
@@ -41,6 +46,10 @@ function App() {
   return (
     <BrowserRouter basename={BASENAME}>
       <div className='App'>
+        <ToastContainer
+          position='top-center'
+          containerId="popup"
+        />
         <Header logged={logged} isAdmin={isAdmin}/>
         <Routes>
             <Route path="/login" element={<Login logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 

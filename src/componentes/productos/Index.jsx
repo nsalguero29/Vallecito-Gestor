@@ -1,11 +1,14 @@
-import { Link } from "react-router-dom"
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-	Button, TextField, Autocomplete
+	Button, TextField
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Paginador, ModalNuevoProducto, ModalEditarProducto} from '../comun/Main';
+import {Accion, Paginador} from '../comun/Main';
+import ModalNuevoProducto from './ModalNuevoProducto';
+
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 let controller = new AbortController();
 let oldController;
@@ -115,7 +118,6 @@ export default function Index ({BASE_URL}){
     axios.get(url, config)
     .then((resp)=>{
       if(resp.data.status === "ok"){
-        console.log(resp.data.productos)
         setProductos(resp.data.productos);
         const paginasTotales = Math.ceil(resp.data.total / limite);
         setPaginasTotales(paginasTotales);
@@ -125,33 +127,33 @@ export default function Index ({BASE_URL}){
   }  
 
   const guardarProducto = (datosProducto, editar = false) => {
-    if (window.confirm("¿Esta seguro que desea registrar un producto?")){
+    if (window.confirm("¿Esta seguro que desea guardar el producto?")){
       const url = BASE_URL + 'productos/'
-      const config = {headers:{authorization:sessionStorage.getItem('token')}};
-      datosProducto.marcaId = datosProducto.marcaId.id;
-      datosProducto.proveedorId = datosProducto.proveedorId.id;
+      
+      datosProducto.marcaId = datosProducto.marca.id;
+      datosProducto.proveedorId = datosProducto.proveedor.id;
       let tipos = [];
-      datosProducto.tiposProductoId.forEach(element => {
+      datosProducto.tiposProducto.forEach(element => {
         tipos.push(element.id);
       });
-      datosProducto.tiposProductoId = tipos;
-
-      if(editar)
-        axios.put(url, datosProducto, config)
-      else
-        axios.post(url, datosProducto, config)
-
+      datosProducto.tiposProductoIds = tipos;
+      const popup = toast.loading("Guardando Producto.", {containerId:'popup', isLoading:true, autoClose:2500});
+      axios({
+        method: editar?'put':'post',
+        headers:{authorization:sessionStorage.getItem('token')},
+        data: datosProducto,
+        url
+      })
       .then((res) => {
+        console.log(res);
         if (res.data.status === "ok"){
-          alert("Guardado");
-          cargarProductos();
+          toast.update(popup, {render:"Producto guardado.", containerId:'popup', type:'success', isLoading:false, autoClose:2500, onClose:()=>cargarProductos()});
         } else {
-          console.log(res.data);
-          alert("Error")
+          toast.update(popup, {render:"Error guardando producto.", containerId:'popup', type:'error', isLoading:false, autoClose:2500});
         }
       })
       .catch((error) => {
-        alert(error)
+        toast.update(popup, {render: error, containerId:'popup', type:'error', isLoading:false, autoClose:2500});
       })
     }
   }
@@ -175,11 +177,12 @@ export default function Index ({BASE_URL}){
           tiposProductoLista={tiposProducto}
           guardarProducto={(datosProducto)=>guardarProducto(datosProducto)}
           salir={() => setModalNuevoProducto(false)}
+          editar={false}
         />
       }
 
       {modalEditarProducto && 
-        <ModalEditarProducto
+        <ModalNuevoProducto
           titulo="Editar Producto"
           proveedoresLista={proveedores}
           marcasLista={marcas}
@@ -187,6 +190,7 @@ export default function Index ({BASE_URL}){
           guardarProducto={(datosProducto, editar)=>guardarProducto(datosProducto, editar)}
           salir={() => setModalEditarProducto(false)}
           datos={datos}
+          editar={true}
         />
       }
       
@@ -212,7 +216,7 @@ export default function Index ({BASE_URL}){
           <div style={{display:'flex', flex:1}}>
           </div>        
         </div>
-        <div className='Listado' style={{display:'flex', flex:1,  width:'99%'}}>
+        <div className='Listado' style={{display:'flex', flex:1, width:'99%'}}>
           {productos.length !== 0 ?
             productos.map((producto, index)=>{
               const tiposProducto = producto.tiposProducto;
@@ -222,13 +226,13 @@ export default function Index ({BASE_URL}){
                     <div style={{display:'flex', flexDirection:'row', 
                     alignItems:'center', justifyContent:'center', width:'100%'}}>
                       <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
-                        <Accion
+                        {/* <Accion
                           icono={expandir === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
                           ayuda="Expandir"
                           backgroundColor={"lightgrey"}
                           disabled={false}
                           onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
-                        />
+                        /> */}
                       </div>
                       <div style={{display:'flex', flex:2, 
                       flexDirection:'row', width:'100%'}}>
@@ -264,7 +268,7 @@ export default function Index ({BASE_URL}){
                       />
                     </div>
                   </div>
-                  {expandir === index &&
+                  {/* {expandir === index &&
                     <div className="Preguntas">
                       <div style={{display:'flex', flexDirection:'row'}}>
                         <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
@@ -291,51 +295,11 @@ export default function Index ({BASE_URL}){
                                 </div>
                               </div>
                             }
-                          </span>
-                          
+                          </span>                          
                         </div>
-                        {/*<div style={{flex: 1, display:'flex', flexDirection:'column'}}>
-                          <span>
-                            <strong>Email: </strong> {proveedor.email}
-                          </span>
-                          <span>
-                            <strong>Instagram: </strong> {proveedor.instagram}
-                          </span>
-                        </div>*/}
                       </div>
-                      {/*productos.length !== 0 &&
-                        <div>
-                          <div style={{display: 'flex', flex:1, margin:'5px 4px', maxWidth:30, flexDirection:'row', placeItems:'center'}}>
-                            <Accion
-                              icono={expandir2 === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
-                              ayuda="Expandir"
-                              backgroundColor={"lightgrey"}
-                              disabled={false}
-                              onClick={() =>{expandir2 === index ? setExpandir2() : setExpandir2(index)}}
-                            />
-                            <strong style={{flex:1}}>PRODUCTOS: </strong>
-                          </div>
-                          {expandir2 === index &&
-                            <div>                          
-                              {productos.map((producto, index2) => {
-                                return(
-                                  <>
-                                    <ul key={producto.id} style={{paddingLeft:25, marginRight: 205}}>
-                                      <div className="Row" style={{placeItems:'center'}}>                                
-                                        <div style={{flex:1}}>
-                                          <li>{producto.producto}<strong>{" (" + producto.stock + ")"}</strong> </li>
-                                        </div>
-                                      </div>                                
-                                    </ul>
-                                  </>
-                                )
-                              })}
-                            </div>
-                          }
-                        </div>
-                      */}
                     </div>
-                  }
+                  } */}                  
                 </div>
               );
             })

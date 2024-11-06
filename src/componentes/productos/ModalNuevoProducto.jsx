@@ -1,16 +1,33 @@
-import BaseModal from "./BaseModal";
+import BaseModal from "../comun/modal/BaseModal";
 import { 
     Button,
     TextField,
     Autocomplete
   } from '@mui/material';
-import { useDatosProducto } from '../../../hooks/useDatosProducto';
+import { useDatosProducto } from '../../hooks/useDatosProducto';
+import { useEffect } from "react";
 
-export default function ModalGenerado ({guardarProducto, proveedoresLista, tiposProductoLista,
-  marcasLista, salir, titulo}){
+import React from 'react';
+
+
+export default function ModalNuevoProducto ({guardarProducto, proveedoresLista, tiposProductoLista,
+  marcasLista, salir, titulo, datos, editar}){
 
     const [datosProducto, setDatoProducto] = useDatosProducto(null);
 
+    useEffect(()=>{
+      if(editar){
+        setDatoProducto('id', datos.id);
+        setDatoProducto('proveedor', datos.proveedor);
+        setDatoProducto('codigoProveedor', datos.codigoProveedor);
+        setDatoProducto('producto', datos.producto);
+        setDatoProducto('tiposProducto', datos.tiposProducto);
+        setDatoProducto('marca', datos.marca);
+        setDatoProducto('stock', datos.stock);
+        setDatoProducto('precioLista', datos.precioLista);
+        setDatoProducto('observacion', datos.observacion);
+      }
+    }, [])
     return (
         <BaseModal titulo={titulo} salir={()=>salir()}>
         <div className='Formulario'style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
@@ -102,7 +119,7 @@ export default function ModalGenerado ({guardarProducto, proveedoresLista, tipos
             />
           </div>        
           <div className='Botonera'>
-            <Button variant="contained" className='Boton' onClick={() => { salir(); guardarProducto(datosProducto) }}>Guardar Nuevo Producto</Button>
+            <Button variant="contained" className='Boton' onClick={() => { salir(); guardarProducto(datosProducto, editar) }}>Guardar Nuevo Producto</Button>
           </div> 
         </div>
         </BaseModal>
