@@ -4,7 +4,7 @@ import {
 	Button, TextField
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Paginador, ModalNuevoCliente} from '../comun/Main';
+import {Accion, Paginador} from '../comun/Main';
 
 let controller = new AbortController();
 let oldController;

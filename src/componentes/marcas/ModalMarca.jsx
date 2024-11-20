@@ -1,10 +1,10 @@
-import BaseModal from "./BaseModal";
+import BaseModal from '../comun/modal/BaseModal';
 import { 
     Button,
     TextField
   } from '@mui/material';
 
-export default function ModalGenerado ({ 
+export default function ModalMarca ({ 
   guardarMarca, setNombreMarca, salir, nombreMarca, titulo}){
     return (
         <BaseModal titulo={titulo} salir={()=>salir()}>

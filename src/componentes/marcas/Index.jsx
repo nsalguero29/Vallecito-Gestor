@@ -5,8 +5,8 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 
-import {Accion, ModalNuevaMarca, Paginador} from '../comun/Main';
-
+import {Accion, Paginador} from '../comun/Main';
+import ModalMarca from './ModalMarca';
 let controller = new AbortController();
 let oldController;
 dayjs.locale('es');
@@ -97,7 +97,7 @@ export default function Index ({BASE_URL}){
   return(
     <div className='' style={{display:'flex', flexDirection:'row'}}>
       {modalNuevaMarca && 
-        <ModalNuevaMarca
+        <ModalMarca
           titulo="Nueva Marca"
           nombreMarca={nombreMarca}
           setNombreMarca= {(nombreMarca)=>setNombreMarca(nombreMarca)}

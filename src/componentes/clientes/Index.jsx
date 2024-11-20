@@ -4,7 +4,8 @@ import {
 	Button, TextField
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Paginador, ModalNuevoCliente} from '../comun/Main';
+import {Accion, Paginador} from '../comun/Main';
+import ModalCliente from './ModalCliente';
 
 let controller = new AbortController();
 let oldController;
@@ -95,7 +96,7 @@ export default function Index ({BASE_URL}){
   return(
     <div className='' style={{display:'flex', flexDirection:'column'}}>
       {modalNuevoCliente && 
-        <ModalNuevoCliente
+        <ModalCliente
           titulo="Nuevo Cliente"
           guardarCliente={(datosCliente)=>guardarCliente(datosCliente)}
           salir={() => setModalNuevoCliente(false)}

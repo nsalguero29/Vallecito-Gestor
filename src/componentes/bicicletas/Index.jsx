@@ -4,8 +4,9 @@ import {
 	Button, TextField
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Paginador, ModalNuevaBicicleta} from '../comun/Main';
+import {Accion, Paginador} from '../comun/Main';
 import {cargarMarcas, cargarClientes} from '../comun/Funciones';
+import ModalBicicleta from './ModalBicicleta';
 
 let controller = new AbortController();
 let oldController;
@@ -108,7 +109,7 @@ export default function Index ({BASE_URL}){
   return(
     <div className='' style={{display:'flex', flexDirection:'column'}}>
       {modalNuevaBicicleta && 
-        <ModalNuevaBicicleta
+        <ModalBicicleta
           titulo="Nueva Bicicleta"
           guardarBicicleta={(datosBicicleta)=>guardarBicicleta(datosBicicleta)}
           marcasLista={marcas}

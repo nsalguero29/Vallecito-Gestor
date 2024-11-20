@@ -1,4 +1,4 @@
-import BaseModal from "./BaseModal";
+import BaseModal from '../comun/modal/BaseModal';
 import { 
     Button,
     TextField
@@ -7,9 +7,9 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { useDatosCliente } from '../../../hooks/useDatosCliente';
+import { useDatosCliente } from '../../hooks/useDatosCliente';
 
-export default function ModalGenerado ({guardarCliente, salir, titulo}){
+export default function ModalCliente ({guardarCliente, salir, titulo}){
 
     const [datosCliente, setDatoCliente] = useDatosCliente(null);
 

@@ -1,11 +1,11 @@
-import BaseModal from "./BaseModal";
+import BaseModal from "../comun/modal/BaseModal";
 import { 
     Button,
     TextField
   } from '@mui/material';
-import { useDatosProveedor } from '../../../hooks/useDatosProveedor';
+import { useDatosProveedor } from '../../hooks/useDatosProveedor';
 
-export default function ModalGenerado ({guardarProveedor, salir, titulo}){
+export default function ModalProveedor ({guardarProveedor, salir, titulo}){
 
     const [datosProveedor, setDatoProveedor] = useDatosProveedor(null);
 

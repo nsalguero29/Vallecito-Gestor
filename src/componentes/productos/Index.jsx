@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import {Accion, Paginador} from '../comun/Main';
-import ModalNuevoProducto from './ModalNuevoProducto';
+import ModalProducto from './ModalProducto';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -170,7 +170,7 @@ export default function Index ({BASE_URL}){
   return(
     <div className='' style={{display:'flex', flexDirection:'row'}}>
       {modalNuevoProducto && 
-        <ModalNuevoProducto
+        <ModalProducto
           titulo="Nuevo Producto"
           proveedoresLista={proveedores}
           marcasLista={marcas}
@@ -182,7 +182,7 @@ export default function Index ({BASE_URL}){
       }
 
       {modalEditarProducto && 
-        <ModalNuevoProducto
+        <ModalProducto
           titulo="Editar Producto"
           proveedoresLista={proveedores}
           marcasLista={marcas}

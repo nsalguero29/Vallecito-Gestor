@@ -4,6 +4,7 @@ export function useDatosProducto (){
   
   const [id, setId] = useState();
   const [producto, setProducto] = useState("");
+  const [codigo, setCodigo] = useState("");
   const [codigoProveedor, setCodigoProveedor] = useState("");
   const [stock, setStock] = useState(0);
   const [precioLista, setPrecioLista] = useState(0);
@@ -16,6 +17,7 @@ export function useDatosProducto (){
     switch (tipo) {
       case 'id': return (setId(valor));
       case 'producto': return (setProducto(valor));
+      case 'codigo': return (setCodigo(valor));
       case 'codigoProveedor': return (setCodigoProveedor(valor));
       case 'stock': return (setStock(valor));
       case 'precioLista': return (setPrecioLista(valor));
@@ -27,7 +29,7 @@ export function useDatosProducto (){
     }
   }
 
-  return ([{ id, producto, codigoProveedor, 
+  return ([{ id, producto, codigo, codigoProveedor, 
     stock, precioLista, observacion,
     proveedor, marca, tiposProducto
   }, setDatoProducto]);

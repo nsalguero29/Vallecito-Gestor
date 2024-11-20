@@ -1,12 +1,12 @@
-import BaseModal from "./BaseModal";
+import BaseModal from '../comun/modal/BaseModal';
 import { 
     Button,
     TextField,
     Autocomplete
   } from '@mui/material';
-import { useDatosBicicleta } from '../../../hooks/useDatosBicicleta';
+import { useDatosBicicleta } from '../../hooks/useDatosBicicleta';
 
-export default function ModalGenerado ({guardarBicicleta, salir, 
+export default function ModalBicicleta ({guardarBicicleta, salir, 
   marcasLista, clientesLista, modelosLista, titulo}){
 
     const [datosBicicleta, setDatoBicicleta] = useDatosBicicleta(null);

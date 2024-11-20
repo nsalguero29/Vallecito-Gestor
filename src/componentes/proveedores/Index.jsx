@@ -5,7 +5,8 @@ import {
 	Button, TextField, Autocomplete
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Paginador, ModalNuevoProveedor} from '../comun/Main';
+import {Accion, Paginador} from '../comun/Main';
+import ModalProveedor from "./ModalProveedor";
 
 let controller = new AbortController();
 let oldController;
@@ -94,7 +95,7 @@ export default function Index ({BASE_URL}){
   return(
     <div className='' style={{display:'flex', flexDirection:'row'}}>
       {modalNuevoProveedor && 
-        <ModalNuevoProveedor
+        <ModalProveedor
           titulo="Nuevo Proveedor"
           guardarProveedor={(datosProveedor)=>guardarProveedor(datosProveedor)}
           salir={() => setModalNuevoProveedor(false)}

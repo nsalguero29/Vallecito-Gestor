@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import React from 'react';
 
 
-export default function ModalNuevoProducto ({guardarProducto, proveedoresLista, tiposProductoLista,
+export default function ModalProducto ({guardarProducto, proveedoresLista, tiposProductoLista,
   marcasLista, salir, titulo, datos, editar}){
 
     const [datosProducto, setDatoProducto] = useDatosProducto(null);
@@ -19,6 +19,7 @@ export default function ModalNuevoProducto ({guardarProducto, proveedoresLista, 
       if(editar){
         setDatoProducto('id', datos.id);
         setDatoProducto('proveedor', datos.proveedor);
+        setDatoProducto('codigo', datos.codigo);
         setDatoProducto('codigoProveedor', datos.codigoProveedor);
         setDatoProducto('producto', datos.producto);
         setDatoProducto('tiposProducto', datos.tiposProducto);
@@ -31,7 +32,34 @@ export default function ModalNuevoProducto ({guardarProducto, proveedoresLista, 
     return (
         <BaseModal titulo={titulo} salir={()=>salir()}>
         <div className='Formulario'style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
+        <div className="Row">
+            <TextField
+              style={{ flex: 1, margin: 10 }}
+              className='Dato'
+              label="Codigo"
+              variant="outlined"
+              value={datosProducto.codigo}
+              onChange={(e) => setDatoProducto('codigo', e.target.value)}
+            />
+            <TextField
+              style={{ flex: 3, margin: 10 }}
+              className="Dato"
+              label="Producto"
+              variant="outlined"
+              value={datosProducto.producto}
+              onChange={(e) => setDatoProducto("producto", e.target.value)}
+            />
+            
+          </div>
           <div className="Row">
+            <TextField
+              style={{ flex: 1, margin: 10 }}
+              className='Dato'
+              label="Codigo para Proveedor"
+              variant="outlined"
+              value={datosProducto.codigoProveedor}
+              onChange={(e) => setDatoProducto('codigoProveedor', e.target.value)}
+            />
             <Autocomplete
               value={datosProducto.proveedor}
               onChange={(e,n) => {setDatoProducto('proveedor', n)}}
@@ -43,24 +71,8 @@ export default function ModalNuevoProducto ({guardarProducto, proveedoresLista, 
               style={{flex: 3, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
               renderInput={(params) => <TextField {...params} label="Proveedor"/>}
             />
-            <TextField
-              style={{ flex: 1, margin: 10 }}
-              className='Dato'
-              label="Codigo Proveedor"
-              variant="outlined"
-              value={datosProducto.codigoProveedor}
-              onChange={(e) => setDatoProducto('codigoProveedor', e.target.value)}
-            />
-          </div>
-          <div className="Row">
-            <TextField
-              style={{ flex: 3, margin: 10 }}
-              className="Dato"
-              label="Producto"
-              variant="outlined"
-              value={datosProducto.producto}
-              onChange={(e) => setDatoProducto("producto", e.target.value)}
-            />
+          </div>          
+          <div className="Row" >  
             <Autocomplete
               value={datosProducto.tiposProducto}
               onChange={(e,n) => {setDatoProducto('tiposProducto', n)}}
@@ -69,12 +81,10 @@ export default function ModalNuevoProducto ({guardarProducto, proveedoresLista, 
               getOptionLabel={(option) => option.tipoProducto}
               noOptionsText="Sin resultados"
               size="medium"
-              style={{flex: 2, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
+              style={{flex: 3, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
               renderInput={(params) => <TextField {...params} label="Tipo Producto"/>}
               multiple={true}
             />
-          </div>
-          <div className="Row" >  
             <Autocomplete
               value={datosProducto.marca}
               onChange={(e,n) => {setDatoProducto('marca', n)}}
