@@ -38,10 +38,11 @@ export default function Login({logeo, BASE_URL}){
 
   return(
     <div className='Login LoginContainer'>
-      <div className='Formulario'>
+      <form className='Formulario' action="#" onSubmit={login}>
         <h3>Inicie sesión</h3>
         <hr width="80%"/>
         <TextField 
+          className="Input"
           style={{margin: '10px 0', width:'100%'}}  
           label="Usuario"
           placeholder="Usuario"
@@ -52,6 +53,7 @@ export default function Login({logeo, BASE_URL}){
           }}
         />
         <TextField 
+          className="Input"
           style={{margin: '15px 0', width:'100%'}}
           label="Contraseña"
           placeholder="Contraseña"
@@ -71,10 +73,11 @@ export default function Login({logeo, BASE_URL}){
           }}
         />
         <Boton
+          type="submit" className="Boton" variant="contained" 
           onClick={() => login()}
           color="#A3D0D0"
         >Ingresar</Boton>
-      </div>
+      </form>
     </div>
   )
 }

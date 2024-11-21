@@ -20,8 +20,9 @@ export default function Index ({}){
   return(
     <div className='Container Index' style={{ alignContent: widthScreen > 550? "center" :"flex-start"}}>
         <Tarjeta url="/clientes" titulo="Clientes" icono=""/>
-        <Tarjeta url="/bicicletas" titulo="Bicicletas" icono=""/>
-        <Tarjeta url="/arreglos" titulo="Arreglos" icono=""/>
+        {/*<Tarjeta url="/bicicletas" titulo="Bicicletas" icono=""/>
+        <Tarjeta url="/arreglos" titulo="Arreglos" icono=""/>*/}
+        <Tarjeta url="/ventas" titulo="Ventas" icono=""/>
         <Tarjeta url="/productos" titulo="Productos" icono=""/>
         <Tarjeta url="/proveedores" titulo="Proveedores" icono=""/>
         <Tarjeta url="/ventas" titulo="Ventas" icono=""/>

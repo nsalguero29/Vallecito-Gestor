@@ -6,8 +6,9 @@ import Logo from '../../assets/images/Logo.jpg';
 
 const MENU = [
   {ruta:"/clientes", titulo:"CLIENTES"},
-  {ruta:"/bicicletas", titulo:"BICICLETAS"},
-  {ruta:"/arreglos", titulo:"ARREGLOS"},
+  //{ruta:"/bicicletas", titulo:"BICICLETAS"},
+  //{ruta:"/arreglos", titulo:"ARREGLOS"},
+  {ruta:"/ventas", titulo:"VENTAS"},
   {ruta:"/productos", titulo:"PRODUCTOS"},
   {ruta:"/proveedores", titulo:"PROVEEDORES"},
   {ruta:"/marcas", titulo:"MARCAS"}
