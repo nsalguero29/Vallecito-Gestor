@@ -25,7 +25,7 @@ export default function Index ({}){
         <Tarjeta url="/ventas" titulo="Ventas" icono=""/>
         <Tarjeta url="/productos" titulo="Productos" icono=""/>
         <Tarjeta url="/proveedores" titulo="Proveedores" icono=""/>
-        <Tarjeta url="/ventas" titulo="Ventas" icono=""/>
+        <Tarjeta url="/marcas" titulo="Marcas" icono=""/>
         {/* <Tarjeta url="/escanear" titulo="Escanear documento" icono="qr_code_scanner"/> */}
     </div>
   )

@@ -108,30 +108,30 @@ export default function Index ({BASE_URL}){
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }  
 
-  const guardarProducto = (datosProducto, editar = false) => {
-    if (window.confirm("¿Esta seguro que desea guardar el producto?")){
-      const url = BASE_URL + 'productos/'
+  const guardarVenta = (datosVenta, editar = false) => {
+    if (window.confirm("¿Esta seguro que desea guardar la venta?")){
+      const url = BASE_URL + 'ventas/'
       
-      datosProducto.marcaId = datosProducto.marca.id;
-      datosProducto.proveedorId = datosProducto.proveedor.id;
-      let tipos = [];
-      datosProducto.tiposProducto.forEach(element => {
-        tipos.push(element.id);
+      //datosProducto.marcaId = datosProducto.marca.id;
+      //datosProducto.proveedorId = datosProducto.proveedor.id;
+      let productos = [];
+      datosVenta.productos.forEach(element => {
+        productos.push(element.id);
       });
-      datosProducto.tiposProductoIds = tipos;
-      const popup = toast.loading("Guardando Producto.", {containerId:'popup', isLoading:true, autoClose:2500});
+      datosVenta.ProductosIds = productos;
+      const popup = toast.loading("Guardando Venta.", {containerId:'popup', isLoading:true, autoClose:2500});
       axios({
         method: editar?'put':'post',
         headers:{authorization:sessionStorage.getItem('token')},
-        data: datosProducto,
+        data: datosVenta,
         url
       })
       .then((res) => {
         console.log(res);
         if (res.data.status === "ok"){
-          toast.update(popup, {render:"Producto guardado.", containerId:'popup', type:'success', isLoading:false, autoClose:2500, onClose:()=>cargarProductos()});
+          toast.update(popup, {render:"Venta guardado.", containerId:'popup', type:'success', isLoading:false, autoClose:2500, onClose:()=>cargarVentas()});
         } else {
-          toast.update(popup, {render:"Error guardando producto.", containerId:'popup', type:'error', isLoading:false, autoClose:2500});
+          toast.update(popup, {render:"Error guardando venta.", containerId:'popup', type:'error', isLoading:false, autoClose:2500});
         }
       })
       .catch((error) => {
@@ -140,9 +140,9 @@ export default function Index ({BASE_URL}){
     }
   }
 
-  const editar = (producto) =>{
-    datos = producto;
-    setModalEditarProducto(true);
+  const editar = (venta) =>{
+    datos = venta;
+    setModalEditarVenta(true);
   }
 
   useEffect(() => {
@@ -163,22 +163,22 @@ export default function Index ({BASE_URL}){
       
       <div style={{display:'flex', flex:1, flexDirection:'column'}}>
         <div style={{display:'flex', flex:1, placeContent:'center'}}>
-            <h2>LISTADO DE PRODUCTOS</h2>          
+            <h2>LISTADO DE VENTAS</h2>          
         </div>
         <div className="Row">
           <div style={{display:'flex', flex:1, placeItems:'center', marginLeft:10}}>
-            Producto: 
+            Nro. Factura: 
             <TextField
               style={{ margin:10, width:350}}
               className='Dato'
-              label="Buscar Producto"
+              label="Buscar Venta"
               variant="outlined"
               value={busqueda}
-              onChange={(e) => {setBusqueda(e.target.value); cargarProductos(e.target.value);}}
+              onChange={(e) => {setBusqueda(e.target.value); cargarVentas(e.target.value);}}
             />
           </div>
           <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
-            <Button variant="contained" className='Boton' onClick={() => { setModalNuevoProducto(true) }}>Nuevo Producto</Button>
+            <Button variant="contained" className='Boton' onClick={() => { setModalNuevaVenta(true) }}>Nueva Venta</Button>
           </div>   
           <div style={{display:'flex', flex:1}}>
           </div>        
@@ -271,7 +271,7 @@ export default function Index ({BASE_URL}){
           page={page}
           limit={limit}
           paginasTotales={paginasTotales}
-          cargar={(busqueda, newPage, newLimit)=>cargarProductos(busqueda, newPage, newLimit)}
+          cargar={(busqueda, newPage, newLimit)=>cargarVentas(busqueda, newPage, newLimit)}
           opciones={[5,10,15,25,50]}
         />
       </div>

@@ -4,29 +4,27 @@ import {
     TextField,
     Autocomplete
   } from '@mui/material';
-import { useDatosProducto } from '../../hooks/useDatosProducto';
+import { useDatosVenta } from "../../hooks/useDatosVenta";
 import { useEffect } from "react";
 
 import React from 'react';
 
 
-export default function ModalVenta ({guardarProducto, proveedoresLista, tiposProductoLista,
-  marcasLista, salir, titulo, datos, editar}){
+export default function ModalVenta ({guardarVenta, tiposProductoLista,
+   clientesLista, salir, titulo, datos, editar}){
 
-    const [datosProducto, setDatoProducto] = useDatosProducto(null);
+    const [datosVenta, setDatoVenta] = useDatosVenta(null);
 
     useEffect(()=>{
       if(editar){
-        setDatoProducto('id', datos.id);
-        setDatoProducto('proveedor', datos.proveedor);
-        setDatoProducto('codigo', datos.codigo);
-        setDatoProducto('codigoProveedor', datos.codigoProveedor);
-        setDatoProducto('producto', datos.producto);
-        setDatoProducto('tiposProducto', datos.tiposProducto);
-        setDatoProducto('marca', datos.marca);
-        setDatoProducto('stock', datos.stock);
-        setDatoProducto('precioLista', datos.precioLista);
-        setDatoProducto('observacion', datos.observacion);
+        setDatoVenta('id', datos.id);
+        setDatoVenta('numFactura', datos.numFactura);
+        setDatoVenta('fechaVenta', datos.fechaVenta);
+        setDatoVenta('tipoPago', datos.tipoPago);
+        setDatoVenta('observacion', datos.observacion);
+        setDatoVenta('valorFinal', datos.valorFinal);
+        setDatoVenta('facturada', datos.facturada);
+        setDatoVenta('productos', datos.productos);
       }
     }, [])
     return (
@@ -36,18 +34,18 @@ export default function ModalVenta ({guardarProducto, proveedoresLista, tiposPro
             <TextField
               style={{ flex: 1, margin: 10 }}
               className='Dato'
-              label="Codigo"
+              label="numFactura"
               variant="outlined"
-              value={datosProducto.codigo}
-              onChange={(e) => setDatoProducto('codigo', e.target.value)}
+              value={datosVenta.numFactura}
+              onChange={(e) => setDatoVenta('numFactura', e.target.value)}
             />
             <TextField
               style={{ flex: 3, margin: 10 }}
               className="Dato"
-              label="Producto"
+              label="fechaVenta"
               variant="outlined"
-              value={datosProducto.producto}
-              onChange={(e) => setDatoProducto("producto", e.target.value)}
+              value={datosVenta.fechaVenta}
+              onChange={(e) => setDatoVenta("fechaVenta", e.target.value)}
             />
             
           </div>
@@ -55,81 +53,32 @@ export default function ModalVenta ({guardarProducto, proveedoresLista, tiposPro
             <TextField
               style={{ flex: 1, margin: 10 }}
               className='Dato'
-              label="Codigo para Proveedor"
+              label="tipoPago"
               variant="outlined"
-              value={datosProducto.codigoProveedor}
-              onChange={(e) => setDatoProducto('codigoProveedor', e.target.value)}
+              value={datosVenta.tipoPago}
+              onChange={(e) => setDatoVenta('tipoPago', e.target.value)}
             />
-            <Autocomplete
-              value={datosProducto.proveedor}
-              onChange={(e,n) => {setDatoProducto('proveedor', n)}}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              options={proveedoresLista}
-              getOptionLabel={(option) => option.proveedor}
-              noOptionsText="Sin resultados"
-              size="medium"
-              style={{flex: 3, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
-              renderInput={(params) => <TextField {...params} label="Proveedor"/>}
+            <TextField
+              style={{ flex: 1, margin: 10 }}
+              className='Dato'
+              label="valorFinal"
+              variant="outlined"
+              value={datosVenta.valorFinal}
+              onChange={(e) => setDatoVenta('valorFinal', e.target.value)}
             />
           </div>          
-          <div className="Row" >  
-            <Autocomplete
-              value={datosProducto.tiposProducto}
-              onChange={(e,n) => {setDatoProducto('tiposProducto', n)}}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              options={tiposProductoLista}
-              getOptionLabel={(option) => option.tipoProducto}
-              noOptionsText="Sin resultados"
-              size="medium"
-              style={{flex: 3, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
-              renderInput={(params) => <TextField {...params} label="Tipo Producto"/>}
-              multiple={true}
-            />
-            <Autocomplete
-              value={datosProducto.marca}
-              onChange={(e,n) => {setDatoProducto('marca', n)}}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              options={marcasLista}
-              getOptionLabel={(option) => option.marca}
-              noOptionsText="Sin resultados"
-              size="medium"
-              style={{flex: 3, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
-              renderInput={(params) => <TextField {...params} label="Marca"/>}
-            />    
-            <TextField
-              style={{ flex: 2, margin: 10 }}
-              className='Dato'
-              label="Stock"
-              variant="outlined"
-              value={datosProducto.stock}
-              type="number"
-              onChange={(e) => setDatoProducto('stock', e.target.valueAsNumber)}
-            />
-            <TextField
-              style={{ flex: 2, margin: 10 }}
-              className='Dato'
-              label="Precio Lista"
-              variant="outlined"
-              value={datosProducto.precioLista}
-              type="number"
-              inputProps={{
-                step: "1"
-              }}
-              onChange={(e) => setDatoProducto('precioLista', e.target.valueAsNumber)}
-            />
-          </div>
           <div className="Row"> 
             <TextField
               style={{ flex: 1, margin: 10 }}
               className='Dato'
               label="Observacion"
               variant="outlined"
-              value={datosProducto.observacion}
-              onChange={(e) => setDatoProducto('observacion', e.target.value)}
+              value={datosVenta.observacion}
+              onChange={(e) => setDatoVenta('observacion', e.target.value)}
             />
           </div>        
           <div className='Botonera'>
-            <Button variant="contained" className='Boton' onClick={() => { salir(); guardarProducto(datosProducto, editar) }}>Guardar Nuevo Producto</Button>
+            <Button variant="contained" className='Boton' onClick={() => { salir(); guardarVenta(datosVenta, editar) }}>Guardar Nueva Venta</Button>
           </div> 
         </div>
         </BaseModal>

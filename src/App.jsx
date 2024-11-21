@@ -2,7 +2,7 @@ import { useState, useEffect} from 'react'
 import { BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import { Arreglos, Bicicletas, Index, 
   Login, Logout, Clientes, 
-  Marcas, Productos, Proveedores, Admin } from './componentes/Main';
+  Marcas, Productos, Proveedores, Admin, Ventas } from './componentes/Main';
 import { Header } from './componentes/comun/Main';
 import './App.css'
 import useEnv from './useEnv';
@@ -72,6 +72,8 @@ function App() {
               <Route path="/admin" element={ <Admin logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
               <Route path="/arreglos" element={ <Arreglos logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+
+              <Route path="/ventas" element={ <Ventas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
             </>
             :
               <Route path="/" element={<Login logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
