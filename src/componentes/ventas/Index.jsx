@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import {Accion, Paginador} from '../comun/Main';
-import ModalVenta from './ModalVenta';
+import { useNavigate } from 'react-router-dom';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,8 +16,9 @@ let datos = [];
 dayjs.locale('es');
 
 export default function Index ({BASE_URL}){
+
+  const navigate = useNavigate();
   
-  const [productos, setProductos] = useState([]);
   const [ventas, setVentas] = useState([]);
   const [tiposProducto, setTiposProducto] = useState([]);
   const [modalNuevaVenta, setModalNuevaVenta] = useState(false); 
@@ -32,7 +33,6 @@ export default function Index ({BASE_URL}){
 
   const init = () => {
     cargarTiposProductos();
-    cargarProductos();
     cargarVentas();
   }
 
@@ -45,22 +45,6 @@ export default function Index ({BASE_URL}){
     .then((resp)=>{   
       if(resp.data.status === "ok"){
         setTiposProducto(resp.data.tiposProducto);
-      }
-    })
-    .catch((error)=>{
-      if(!axios.isCancel) alert(error);
-    })
-  }
-
-  const cargarProductos = () => {
-    const url = BASE_URL + "productos/listar";
-    const config = {
-      headers:{authorization: sessionStorage.getItem('token')}      
-    }
-    axios.get(url, config)
-    .then((resp)=>{   
-      if(resp.data.status === "ok"){
-        setProductos(resp.data.productos);
       }
     })
     .catch((error)=>{
@@ -151,10 +135,10 @@ export default function Index ({BASE_URL}){
 
   return(
     <div className='' style={{display:'flex', flexDirection:'row'}}>
-      {modalNuevaVenta && 
+      {modalNuevaVenta &&        
         <ModalVenta
           titulo="Nueva Venta"
-          productosLista={productos}
+          BASE_URL={BASE_URL}
           guardarVenta={(datosVenta)=>guardarVenta(datosVenta)}
           salir={() => setModalNuevaVenta(false)}
           editar={false}
@@ -178,7 +162,7 @@ export default function Index ({BASE_URL}){
             />
           </div>
           <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
-            <Button variant="contained" className='Boton' onClick={() => { setModalNuevaVenta(true) }}>Nueva Venta</Button>
+            <Button variant="contained" className='Boton' onClick={() => { navigate('/ventas/nueva') }}>Nueva Venta</Button>
           </div>   
           <div style={{display:'flex', flex:1}}>
           </div>        

@@ -9,6 +9,7 @@ import Proveedores from "./proveedores/Index";
 import Arreglos from "./arreglos/Index";
 import Admin from "./admin/Index";
 import Ventas from "./ventas/Index";
+import NuevaVenta from "./ventas/NuevaVenta";
 
 export {
   Index,
@@ -21,5 +22,6 @@ export {
   Proveedores,
   Arreglos,
   Admin,
-  Ventas
+  Ventas,
+  NuevaVenta
 }

@@ -31,6 +31,8 @@ export default function ModalCliente ({guardarCliente, salir, titulo}){
                 label="Fecha de Nacimiento" 
                 value={dayjs(datosCliente.fechaNac)}
                 views={['day', 'month', 'year']}
+                disableFuture={true}
+                format="DD/MM/YYYY"
                 onChange={(e) => setDatoCliente('fechaNac', e)}              
               />
             </LocalizationProvider>

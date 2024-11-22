@@ -6,6 +6,9 @@ import './styles.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function Login({logeo, BASE_URL}){
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState("");
@@ -13,6 +16,8 @@ export default function Login({logeo, BASE_URL}){
   const navigate = useNavigate();
 
   const login = () =>{
+    //e.preventDefault();
+    const popup = toast.loading("Ingresando..", {containerId: 'popup'});
     if(user != "" && pass != ""){
       const url = BASE_URL + "usuarios/login";
       axios.post(url, {user, pass})
@@ -20,19 +25,17 @@ export default function Login({logeo, BASE_URL}){
         if(resp.data.status === "ok"){
           sessionStorage.setItem('datos', JSON.stringify(resp.data.datos));
           sessionStorage.setItem('token', resp.data.token);
-          logeo();
-          navigate("/");
+          toast.update(popup, { render: "Ingreso con exito", type: "success", isLoading: false,  autoClose: 2500, containerId: 'popup', onClose: () => {logeo(); navigate("/");} });
         } 
         else {
-          alert(resp.data.error);
+          toast.update(popup, { render: resp.data.error, type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
         }
       })
       .catch((error)=>{
-        console.log(error);
-        alert(error);
+        toast.update(popup, { render: error, type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
       })
     }else{
-      alert("Complete datos de ingreso")
+      toast.update(popup, { render: "Complete todos los campos", type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
     }
   }
 
@@ -47,6 +50,7 @@ export default function Login({logeo, BASE_URL}){
           label="Usuario"
           placeholder="Usuario"
           value={user}
+          required
           onChange={(e) => setUser(e.target.value)}
           InputProps={{
             startAdornment: <InputAdornment position="start"> <Person /> </InputAdornment>
@@ -59,6 +63,7 @@ export default function Login({logeo, BASE_URL}){
           placeholder="Contraseña"
           type={showPassword ? "text" : "password"}
           value={pass}
+          required
           onChange={(e) => setPass(e.target.value)}
           InputProps={{
             startAdornment: <InputAdornment position="start"> <VpnKey /> </InputAdornment>,
