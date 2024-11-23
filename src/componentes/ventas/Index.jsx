@@ -197,7 +197,7 @@ export default function Index ({BASE_URL}){
                             <strong> Valor Final: </strong>  {venta.valorFinal} 
                           </div>
                           <div style={{flex:1, display:'flex'}}>
-                            <strong> Cliente: ${venta.cliente.apellidos}, ${venta.cliente.nombres}  </strong>
+                            {/* <strong> Cliente: ${venta.cliente.apellidos}, ${venta.cliente.nombres}  </strong> */}
                           </div>
                         </div>
                       </div>

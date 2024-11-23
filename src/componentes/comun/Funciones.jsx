@@ -1,4 +1,9 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { 
+  Button
+} from '@mui/material';
 
 const cargarMarcas = (BASE_URL) => {
   new Promise((resolve, reject) => { 
@@ -55,8 +60,44 @@ const cargarProveedores = (BASE_URL) => {
   })
 }
 
+const Msg = ({ message, saveData, cancel }) => (
+  <div>
+    <div className="Fila">
+      <span>{message}</span>
+    </div>
+    <div className="Fila" style={{display:'flex', justifyContent:'space-evenly'}}>
+      <Button 
+        type="submit" className="Boton" variant="contained" 
+        onClick={saveData}
+      >Actualizar</Button>
+      <Button 
+        type="submit" className="Boton" variant="contained" 
+        onClick={cancel}
+      >Cancelar</Button>
+    </div>
+  </div>
+);
+
+const showToast = (msg, saveData, popup) =>{
+  toast.update( popup, 
+    {
+      render:
+        <Msg 
+          message={msg}
+          saveData={saveData} 
+          cancel={()=>{
+            setDisabled(false);
+          }} 
+        />
+      ,
+      containerId: 'popup', 
+      autoClose:false
+    })
+}
+
 export { 
     cargarMarcas, 
     cargarClientes,
-    cargarProveedores
+    cargarProveedores,
+    showToast
 }

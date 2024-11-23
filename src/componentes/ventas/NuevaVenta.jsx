@@ -1,4 +1,3 @@
-import BaseModal from "../comun/modal/BaseModal";
 import { 
     Button,
     TextField,
@@ -13,11 +12,14 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { showToast } from '../comun/Funciones';
+import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 let controller = new AbortController();
 let oldController;
-let datos = [];
 dayjs.locale('es');
 
 import React from 'react';
@@ -66,6 +68,7 @@ function DetalleVenta ({productosLista, detalle, index, setDatoDetalle, eliminar
 }
 
 export default function NuevaVenta ({BASE_URL}){
+  const navigate = useNavigate();
 
   const [datosVenta, setDatoVenta] = useDatosVenta();
 
@@ -159,6 +162,53 @@ export default function NuevaVenta ({BASE_URL}){
     setDetallesVenta(newDetallesVenta);
   }
 
+  const guardarVenta= (datosVenta) => {
+    const popup = toast.info("Registrando Venta..", {containerId: 'popup'});
+    const saveData = () => {
+      toast.update(popup, {
+        render: "Registrando..",
+        type: "info",
+        isLoading: true,
+        containerId: 'popup'
+      });
+
+      const url = BASE_URL + 'ventas/'
+      const config = {headers:{authorization:sessionStorage.getItem('token')}};
+      datosVenta.detallesVenta = detallesVenta;
+
+      const datos = {
+        numFactura: datosVenta.numFactura,
+        fechaVenta: datosVenta.fechaVenta,
+        cliente: datosVenta.cliente,
+        tipoPago: datosVenta.tipoPago,
+        valorFinal: datosVenta.valorFinal,
+        observacion: datosVenta.observacion,
+        detallesVenta: datosVenta.detallesVenta
+      }
+
+      axios.post(url, datos, config)
+      .then((resp)=>{
+        if(resp.data.status === "ok"){
+          toast.update(popup, { 
+            render: "Datos de Contacto Registados.", 
+            type: "success", 
+            isLoading: false,  
+            autoClose: 1500,
+            onClose: () => navigate("/ventas"), 
+            containerId: 'popup'
+          });
+        }else{        
+          toast.update(popup, { render: resp.data.error, type: "error", isLoading: false,  autoClose: 2500, onClose: () => setDisabled(false), containerId: 'popup' });
+        }
+      })
+      .catch((error)=>{  
+        toast.update(popup, { render: error, type: "error", isLoading: false,  autoClose: 2500, onClose: () => setDisabled(false), containerId: 'popup' });   
+      })
+    }
+
+    showToast("¿Esta seguro que desea registrar esta venta?", saveData, popup);
+  }
+
   useEffect(()=>{
     cargarProductos()
     .then(()=>{
@@ -223,10 +273,11 @@ export default function NuevaVenta ({BASE_URL}){
               onChange={(e)=>setDatoVenta('tipoPago', e.target.value)}
               disabled={cargando}
             >
-              <MenuItem value={"Efectivo"}>Efectivo</MenuItem>
-              <MenuItem value={"Debito"}>Debito</MenuItem>
-              <MenuItem value={"Credito"}>Credito</MenuItem>
-              <MenuItem value={"Transferencia"}>Transferencia</MenuItem>
+              <MenuItem value={"efectivo"}>Efectivo</MenuItem>
+              <MenuItem value={"debito"}>Debito</MenuItem>
+              <MenuItem value={"credito"}>Credito</MenuItem>
+              <MenuItem value={"transferencia"}>Transferencia</MenuItem>
+              <MenuItem value={"cheque"}>Cheque</MenuItem>
             </Select>
           </FormControl>
           <TextField
@@ -284,9 +335,11 @@ export default function NuevaVenta ({BASE_URL}){
         </div>
         <div className='Botonera'>
           <Button variant="contained" className='Boton' 
-            onClick={() => { salir(); guardarVenta(datosVenta, editar) 
             disabled={cargando}
-          }}>Guardar Nueva Venta</Button>
+            onClick={() => { 
+              guardarVenta(datosVenta) 
+            }}
+          >Guardar Nueva Venta</Button>
         </div> 
     </div>
   )
