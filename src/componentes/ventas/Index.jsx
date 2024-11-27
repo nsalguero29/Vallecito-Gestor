@@ -176,13 +176,13 @@ export default function Index ({BASE_URL}){
                     <div style={{display:'flex', flexDirection:'row', 
                     alignItems:'center', justifyContent:'center', width:'100%'}}>
                       <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
-                        {/* <Accion
+                        <Accion
                           icono={expandir === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
                           ayuda="Expandir"
                           backgroundColor={"lightgrey"}
                           disabled={false}
                           onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
-                        /> */}
+                        />
                       </div>
                       <div style={{display:'flex', flex:2, 
                       flexDirection:'row', width:'100%'}}>
@@ -196,8 +196,11 @@ export default function Index ({BASE_URL}){
                           <div style={{flex:1}}>
                             <strong> Valor Final: </strong>  {venta.valorFinal} 
                           </div>
+                          <div style={{flex:1}}>
+                            <strong> Facturada: </strong>  {venta.facturada?"Facturada":"Pendiente"} 
+                          </div>
                           <div style={{flex:1, display:'flex'}}>
-                            {/* <strong> Cliente: ${venta.cliente.apellidos}, ${venta.cliente.nombres}  </strong> */}
+                            <strong> Cliente: {venta.cliente.documento} - {venta.cliente.apellidos}, {venta.cliente.nombres}  </strong>
                           </div>
                         </div>
                       </div>
@@ -212,24 +215,24 @@ export default function Index ({BASE_URL}){
                       /> */}
                     </div>
                   </div>
-                  {/* {expandir === index &&
+                  {expandir === index &&
                     <div className="Preguntas">
                       <div style={{display:'flex', flexDirection:'row'}}>
                         <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
                           <span>
-                            <strong>producto: </strong> {producto.producto}
+                            <strong>Detalles: </strong>
                           </span>
                           <span>
-                            {tiposProducto.length !== 0 &&
+                            {venta.detalles.length !== 0 &&
                               <div>
                                 <div>                          
-                                  {tiposProducto.map((tipoProducto, index2) => {
+                                  {venta.detalles.map((detalle, index2) => {
                                     return(
                                       <>
-                                        <ul key={tipoProducto.id} style={{paddingLeft:25, marginRight: 205}}>
+                                        <ul key={detalle.id} style={{paddingLeft:25, marginRight: 205}}>
                                           <div className="Row" style={{placeItems:'center'}}>                                
                                             <div style={{flex:1}}>
-                                              <li>{tipoProducto.tipoProducto}<strong>{" ()"}</strong> </li>
+                                              <li>{detalle.producto.producto}<strong>{" ("}{detalle.cantidad}{")"}</strong> </li>
                                             </div>
                                           </div>                                
                                         </ul>
@@ -243,7 +246,7 @@ export default function Index ({BASE_URL}){
                         </div>
                       </div>
                     </div>
-                  } */}                  
+                  }                 
                 </div>
               );
             })
