@@ -232,7 +232,7 @@ export default function Index ({BASE_URL}){
                                         <ul key={detalle.id} style={{paddingLeft:25, marginRight: 205}}>
                                           <div className="Row" style={{placeItems:'center'}}>                                
                                             <div style={{flex:1}}>
-                                              <li>{detalle.producto.producto}<strong>{" ("}{detalle.cantidad}{")"}</strong> </li>
+                                              <li><strong>{" ("}{detalle.cantidad}{")"}</strong> {detalle.producto.producto} - ${detalle.precio} </li>
                                             </div>
                                           </div>                                
                                         </ul>
