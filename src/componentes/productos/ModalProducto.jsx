@@ -5,7 +5,7 @@ import {
     Autocomplete
   } from '@mui/material';
 import { useDatosProducto } from '../../hooks/useDatosProducto';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import React from 'react';
 
@@ -14,6 +14,7 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
   marcasLista, salir, titulo, datos, editar}){
 
     const [datosProducto, setDatoProducto] = useDatosProducto(null);
+    const [disabled, setDisabled] = useState(false);
 
     useEffect(()=>{
       if(editar){
@@ -40,6 +41,7 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
               variant="outlined"
               value={datosProducto.codigo}
               onChange={(e) => setDatoProducto('codigo', e.target.value)}
+              disabled={disabled}
             />
             <TextField
               style={{ flex: 3, margin: 10 }}
@@ -48,6 +50,7 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
               variant="outlined"
               value={datosProducto.producto}
               onChange={(e) => setDatoProducto("producto", e.target.value)}
+              disabled={disabled}
             />
             
           </div>
@@ -59,6 +62,7 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
               variant="outlined"
               value={datosProducto.codigoProveedor}
               onChange={(e) => setDatoProducto('codigoProveedor', e.target.value)}
+              disabled={disabled}
             />
             <Autocomplete
               value={datosProducto.proveedor}
@@ -70,6 +74,7 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
               size="medium"
               style={{flex: 3, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
               renderInput={(params) => <TextField {...params} label="Proveedor"/>}
+              disabled={disabled}
             />
           </div>          
           <div className="Row" >  
@@ -84,6 +89,7 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
               style={{flex: 3, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
               renderInput={(params) => <TextField {...params} label="Tipo Producto"/>}
               multiple={true}
+              disabled={disabled}
             />
             <Autocomplete
               value={datosProducto.marca}
@@ -95,6 +101,7 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
               size="medium"
               style={{flex: 3, maxWidth:350, margin: '4px 4px', paddingLeft: 5, alignContent:'center'}}
               renderInput={(params) => <TextField {...params} label="Marca"/>}
+              disabled={disabled}
             />    
             <TextField
               style={{ flex: 2, margin: 10 }}
@@ -104,6 +111,7 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
               value={datosProducto.stock}
               type="number"
               onChange={(e) => setDatoProducto('stock', e.target.valueAsNumber)}
+              disabled={disabled}
             />
             <TextField
               style={{ flex: 2, margin: 10 }}
@@ -116,6 +124,7 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
                 step: "1"
               }}
               onChange={(e) => setDatoProducto('precioLista', e.target.valueAsNumber)}
+              disabled={disabled}
             />
           </div>
           <div className="Row"> 
@@ -126,10 +135,12 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
               variant="outlined"
               value={datosProducto.observacion}
               onChange={(e) => setDatoProducto('observacion', e.target.value)}
+              disabled={disabled}
             />
           </div>        
           <div className='Botonera'>
-            <Button variant="contained" className='Boton' onClick={() => { salir(); guardarProducto(datosProducto, editar) }}>Guardar Nuevo Producto</Button>
+            <Button variant="contained" className='Boton' disabled={disabled}
+             onClick={() => {setDisabled(true); guardarProducto(datosProducto, editar) }}>Guardar Nuevo Producto</Button>
           </div> 
         </div>
         </BaseModal>

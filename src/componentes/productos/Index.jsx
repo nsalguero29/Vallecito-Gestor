@@ -6,7 +6,9 @@ import {
 import dayjs from 'dayjs';
 import {Accion, Paginador} from '../comun/Main';
 import ModalProducto from './ModalProducto';
+import { useNavigate } from 'react-router-dom';
 
+import { showToast } from '../comun/Funciones';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -16,7 +18,8 @@ let datos = [];
 dayjs.locale('es');
 
 export default function Index ({BASE_URL}){
-  
+  const navigate = useNavigate();
+
   const [productos, setProductos] = useState([]);
   const [proveedores, setProveedores] = useState([]);
   const [marcas, setMarcas] = useState([]);
@@ -33,6 +36,7 @@ export default function Index ({BASE_URL}){
   const [paginasTotales, setPaginasTotales] = useState(0);
 
   const init = () => {
+    setProductos([]);
     cargarProveedores();
     cargarMarcas();
     cargarTiposProductos();
@@ -127,7 +131,8 @@ export default function Index ({BASE_URL}){
   }  
 
   const guardarProducto = (datosProducto, editar = false) => {
-    if (window.confirm("¿Esta seguro que desea guardar el producto?")){
+    let popup = toast.info("Registrando Producto..", {containerId: 'popup'});
+    const saveData = () => {
       const url = BASE_URL + 'productos/'
       
       datosProducto.marcaId = datosProducto.marca.id;
@@ -137,7 +142,7 @@ export default function Index ({BASE_URL}){
         tipos.push(element.id);
       });
       datosProducto.tiposProductoIds = tipos;
-      const popup = toast.loading("Guardando Producto.", {containerId:'popup', isLoading:true, autoClose:2500});
+      toast.update(popup, {render: "Guardando Producto.", type:'default', containerId:'popup', isLoading:true, autoClose:2500});
       axios({
         method: editar?'put':'post',
         headers:{authorization:sessionStorage.getItem('token')},
@@ -147,15 +152,17 @@ export default function Index ({BASE_URL}){
       .then((res) => {
         console.log(res);
         if (res.data.status === "ok"){
-          toast.update(popup, {render:"Producto guardado.", containerId:'popup', type:'success', isLoading:false, autoClose:2500, onClose:()=>cargarProductos()});
+          toast.update(popup, {render:"Producto guardado.", containerId:'popup', type:'success', isLoading:false, autoClose:2500, onClose:()=>init()});
         } else {
           toast.update(popup, {render:"Error guardando producto.", containerId:'popup', type:'error', isLoading:false, autoClose:2500});
         }
+        setModalEditarProducto(false);
       })
       .catch((error) => {
         toast.update(popup, {render: error, containerId:'popup', type:'error', isLoading:false, autoClose:2500});
       })
     }
+    showToast("¿Esta seguro que desea registrar esta venta?", saveData, popup);
   }
 
   const editar = (producto) =>{

@@ -190,9 +190,8 @@ export default function NuevaVenta ({BASE_URL}){
       .then((resp)=>{
         if(resp.data.status === "ok"){
           toast.update(popup, { 
-            render: "Datos de Contacto Registados.", 
-            type: "success", 
-            isLoading: false,  
+            render: "Venta Registrada.", 
+            type: "success",  
             autoClose: 1500,
             onClose: () => navigate("/ventas"), 
             containerId: 'popup'
