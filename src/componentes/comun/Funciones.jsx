@@ -4,18 +4,23 @@ import 'react-toastify/dist/ReactToastify.css';
 import { 
   Button
 } from '@mui/material';
+import Cookies from 'js-cookie';
+import {jwtDecode} from 'jwt-decode';
 
 const cargarMarcas = (BASE_URL) => {
   new Promise((resolve, reject) => { 
     const url = BASE_URL + "marcas/listar";
-    const config = {
-      headers:{authorization: sessionStorage.getItem('token')}      
-    }
-    axios.get(url, config)
-    .then((resp)=>{   
-      if(resp.data.status === "ok"){
-        resolve(resp.data.marcas);
+    getJWT()
+    .then((jwt)=>{      
+      const config = {
+        headers:{authorization: jwt}      
       }
+      axios.get(url, config)
+      .then((resp)=>{   
+        if(resp.data.status === "ok"){
+          resolve(resp.data.marcas);
+        }
+      })
     })
     .catch((error)=>{
       if(!axios.isCancel) reject(error);
@@ -27,14 +32,17 @@ const cargarMarcas = (BASE_URL) => {
 const cargarClientes = (BASE_URL) => {
   new Promise((resolve, reject) => { 
     const url = BASE_URL + "clientes/listar";
-    const config = {
-        headers:{authorization: sessionStorage.getItem('token')}      
-    }
-    axios.get(url, config)
-    .then((resp)=>{
+    getJWT()
+    .then((jwt)=>{      
+      const config = {
+        headers:{authorization: jwt}      
+      }
+      axios.get(url, config)
+      .then((resp)=>{
         if(resp.data.status === "ok"){
           resolve(resp.data.clientes);
         }
+      })
     })
     .catch((error)=>{
       if(!axios.isCancel) reject(error);
@@ -46,14 +54,17 @@ const cargarClientes = (BASE_URL) => {
 const cargarProveedores = (BASE_URL) => {
   new Promise((resolve, reject) => {
     const url = BASE_URL + "proveedores/listar";
-    const config = {
-      headers:{authorization: sessionStorage.getItem('token')}      
-    }
-    axios.get(url, config)
-    .then((resp)=>{
-      if(resp.data.status === "ok"){
-        resolve (resp.data.proveedores);
+    getJWT()
+    .then((jwt)=>{      
+      const config = {
+        headers:{authorization: jwt}      
       }
+      axios.get(url, config)
+      .then((resp)=>{
+        if(resp.data.status === "ok"){
+          resolve (resp.data.proveedores);
+        }
+      })
     })
     .catch((error)=>{
       if(!axios.isCancel) reject(error);})
@@ -95,9 +106,42 @@ const showToast = (msg, saveData, popup) =>{
     })
 }
 
+const checkTokenExpirado = function(fechaString) {
+  return new Promise((resolve, reject) => {
+    const fechaActual = new Date();
+    const fechaExpiracion = new Date(fechaString);
+    if (fechaExpiracion.getTime() * 1000 < fechaActual.getTime()) {
+        Cookies.clear();
+        return reject("La fecha ha expirado");
+    } else {
+        return resolve();
+    }
+  })
+}
+
+const getJWT = function() {
+  return new Promise((resolve, reject) => {
+    const jwt = Cookies.get('jwt');
+    if (jwt) {
+      const jwtData = jwtDecode(jwt); 
+      //console.log({jwtData});      
+      checkTokenExpirado(jwtData.exp)
+      .then(()=>{
+        return resolve({jwt, jwtData});
+      })
+      .catch(()=>{
+        return reject("Token expirado");
+      })
+    }else{
+      return reject("Sin token");
+    }
+  })
+}
+
 export { 
     cargarMarcas, 
     cargarClientes,
     cargarProveedores,
-    showToast
+    showToast,
+    getJWT
 }

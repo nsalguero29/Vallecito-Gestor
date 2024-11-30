@@ -11,6 +11,7 @@ import React from 'react';
 import { Slide, ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
+import { getJWT } from './componentes/comun/Funciones';
 
 function App() {
 
@@ -23,25 +24,26 @@ function App() {
   }
 
   const checkLogged = () =>{
-    return sessionStorage.getItem('token')!== null;
+    return new Promise((resolve, reject) => {      
+      getJWT()
+      .then((jwt, jwtData) =>{     
+        resolve(jwt !== null);
+      })
+      .catch((error)=>{     
+        reject();
+      })
+    })
   }
 
   const checkIsAdmin = () =>{
-    if(sessionStorage.getItem('datos') !== null){
-      const datos = JSON.parse(sessionStorage.getItem('datos'));
-      return datos.tipo === 1;
-    }else{
+    getJWT()
+    .then((jwt, jwtData) =>{
+      return jwtData.datos.tipo === 2;
+    })
+    .catch((error)=>{
       return false;
-    }
+    })
   }
-
-  useEffect(()=>{
-    setLogged(checkLogged());    
-  },[])
-  
-  useEffect(()=>{    
-    setIsAdmin(checkIsAdmin());
-  },[logged])
 
   return (
     <BrowserRouter basename={BASENAME}>
@@ -50,36 +52,31 @@ function App() {
           position='top-center'
           containerId="popup"
         />
-        <Header logged={logged} isAdmin={isAdmin}/>
         <Routes>
             <Route path="/login" element={<Login logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
-            {checkLogged()?
-            <>
-              <Route path="/" element={ <Index /> }/>
               
-              <Route path="/logout" element={ <Logout logout={()=>logeo(false)} /> }/>
+            <Route path="/" element={ <Index checkLogged={()=>checkLogged()} /> }/> 
+            
+            <Route path="/logout" element={ <Logout checkLogged={()=>checkLogged()} logout={()=>logeo(false)} /> }/>
 
-              <Route path="/productos" element={ <Productos logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-              
-              <Route path="/marcas" element={ <Marcas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+            <Route path="/productos" element={ <Productos checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+            
+            <Route path="/marcas" element={ <Marcas checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/proveedores" element={ <Proveedores logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+            <Route path="/proveedores" element={ <Proveedores checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/bicicletas" element={ <Bicicletas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+            <Route path="/bicicletas" element={ <Bicicletas checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/clientes" element={ <Clientes logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+            <Route path="/clientes" element={ <Clientes checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/admin" element={ <Admin logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+            <Route path="/admin" element={ <Admin checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/arreglos" element={ <Arreglos logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+            <Route path="/arreglos" element={ <Arreglos checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
 
-              <Route path="/ventas" element={ <Ventas logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-              
-              <Route path="/ventas/nueva" element={ <NuevaVenta logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-            </>
-            :
-              <Route path="/" element={<Login logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
-            }
+            <Route path="/ventas" element={ <Ventas checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+            
+            <Route path="/ventas/nueva" element={ <NuevaVenta checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
+            
         </Routes>
       </div>
     </BrowserRouter>

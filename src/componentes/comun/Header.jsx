@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import './styles.css';
+import { useEffect, useState } from "react";
 
 //import gobLogo from '../../assets/images/LogoIco.png';
 import Logo from '../../assets/images/Logo.jpg';
@@ -26,42 +27,8 @@ function Opcion ({ruta, seleccionada, children}){
   )
 }
 
-export default function Header({logged, isAdmin}){
+export default function Header({isAdmin}){
   const location = useLocation();
-  const derecha = () => {
-    if(logged) {
-      if(isAdmin){
-        return(
-          <>
-            <Opcion
-              ruta="/admin"
-              seleccionada={false}
-            >Admin</Opcion>
-            <Opcion
-              ruta="/logout"
-              seleccionada={false}
-            >Cerrar Sesión</Opcion>
-          </>
-        )
-      }else{
-        return(
-          <>
-            <Opcion
-              ruta="/logout"
-              seleccionada={false}
-            >Cerrar Sesión</Opcion>
-          </>
-        )
-      }
-    } else {
-      return (
-        <Opcion
-          ruta="/login"
-          seleccionada={false}
-        >Iniciar Sesión</Opcion>
-      )
-    }
-  }
 
   return(
     <div className="Header">
@@ -69,7 +36,7 @@ export default function Header({logged, isAdmin}){
         <img src={Logo} alt="Logo" style={{width:"100%"}}/> 
       </Link>
       <div className="Opciones">
-        {logged && MENU.map((link, index) => 
+        {MENU.map((link, index) => 
           <Opcion
             key={index}
             ruta={link.ruta}
@@ -78,7 +45,10 @@ export default function Header({logged, isAdmin}){
         )}
       </div>
       <div style={{margin: 'auto 0'}}>
-        {derecha()}
+        <Opcion
+          ruta="/logout"
+          seleccionada={false}
+        >Cerrar Sesión</Opcion>
       </div>
     </div>
   )

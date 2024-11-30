@@ -1,16 +1,18 @@
 import { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { getJWT } from '../comun/Funciones';
 
 export default function Logout({logout}){
 
   const navigate = useNavigate();
 
-  useEffect(()=>{
-    const datos = sessionStorage.getItem("datos");
-    if(datos != null){
-      logout();
-      sessionStorage.clear();
-    }
-    return navigate("/login");
-  },[])
+  useEffect(() => {   
+    getJWT()
+    .then(() => {
+      Cookies.remove("jwt");
+      navigate("/");
+    })
+    .catch(() => navigate("/ingresar") );
+  }, [])
 }

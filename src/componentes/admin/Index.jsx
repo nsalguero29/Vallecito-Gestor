@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { useEffect, useState } from 'react';
+import Header from "../comun/Header";
 
 function Tarjeta ({titulo, url, icono}){
   return(
@@ -18,8 +19,11 @@ export default function Index ({}){
   useEffect(() => setWidthScreen(window.screen.width),[])
 
   return(
-    <div className='Container Index' style={{ alignContent: widthScreen > 550? "center" :"flex-start"}}>
-        ADMIN
-    </div>
+    <>
+      <Header isAdmin={false}/>
+      <div className='Container Index' style={{ alignContent: widthScreen > 550? "center" :"flex-start"}}>
+          ADMIN
+      </div>
+    </>    
   )
 }

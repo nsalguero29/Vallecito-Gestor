@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { TextField, InputAdornment, IconButton} from '@mui/material';
 import { Person, VpnKey, VisibilityOff, Visibility } from '@mui/icons-material';
-import { Boton } from '../comun/Main';
+import { Boton, Header } from '../comun/Main';
 import './styles.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie';
+import { getJWT } from '../comun/Funciones';
 
 export default function Login({logeo, BASE_URL}){
   const [showPassword, setShowPassword] = useState(false);
@@ -22,9 +24,10 @@ export default function Login({logeo, BASE_URL}){
       const url = BASE_URL + "usuarios/login";
       axios.post(url, {user, pass})
       .then((resp)=>{
+        //console.log({resp});        
         if(resp.data.status === "ok"){
-          sessionStorage.setItem('datos', JSON.stringify(resp.data.datos));
-          sessionStorage.setItem('token', resp.data.token);
+          const { token } = resp.data;
+          Cookies.set('jwt', token, { expires: 7 });
           toast.update(popup, { render: "Ingreso con exito", type: "success", isLoading: false,  autoClose: 2500, containerId: 'popup', onClose: () => {logeo(); navigate("/");} });
         } 
         else {
