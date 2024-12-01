@@ -30,13 +30,13 @@ dayjs.locale('es');
 function DetalleVenta ({productosLista, detalle, index, setDatoDetalle, eliminarDetalle, cargando}){
 
   return(
-    <div style={{display:'flex', flexDirection:'row', margin:'10px 50px'}}>
+    <div key={index} style={{display:'flex', flexDirection:'row', margin:'10px'}}>
       <Autocomplete
-        value={detalle.producto?.producto}
+        value={detalle.producto}
         onChange={(e,n) => {setDatoDetalle(index, "producto", n)}}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         options={productosLista}
-        getOptionLabel={(option) => option.producto}
+        getOptionLabel={(option) => option.codigo + " - " + option.producto}
         noOptionsText="Sin resultados"
         size="small"
         style={{flex: 3, width:'98.5%', margin: '4px 4px'}}
@@ -55,7 +55,7 @@ function DetalleVenta ({productosLista, detalle, index, setDatoDetalle, eliminar
       <TextField
         style={{ flex: 1, margin: 10 }}
         className='Dato'
-        label="Precio Unitario"
+        label={"Precio Unitario (Precio Lista $"+ detalle.precioLista + ")"}
         variant="outlined"
         value={detalle.precio}
         onChange={(e) => setDatoDetalle(index, "precio", e.target.value)}
@@ -71,23 +71,7 @@ function DetalleVenta ({productosLista, detalle, index, setDatoDetalle, eliminar
 }
 
 export default function NuevaVenta ({BASE_URL, checkLogged}){
-  const navigate = useNavigate();  
-  useEffect(()=>{
-    checkLogged()
-    .then(()=>{
-      cargarProductos()
-      .then(()=>{
-        cargarClientes()
-        .then(()=>{
-          datosVenta.fechaVenta = dayjs();
-          setCargando(false)
-        })
-      })
-    })
-    .catch((error)=>{
-      navigate('/login');
-    })
-  },[])
+  const navigate = useNavigate(); 
 
   const [datosVenta, setDatoVenta] = useDatosVenta();
 
@@ -97,6 +81,34 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
   const [clientesLista, setClientesLista] = useState([]);
 
   const [cargando, setCargando] = useState(true);    
+  const [valorDetalles, setValorDetalles] = useState(0);
+
+  useEffect(()=>{
+    checkLogged()
+    .then(()=>{
+      cargarProductos()
+      .then(()=>{
+        cargarClientes()
+        .then(()=>{
+          setDatoVenta("fechaVenta", dayjs());
+          setDatoVenta("cliente", null);
+          setCargando(false)
+        })
+      })
+    })
+    .catch((error)=>{
+      navigate('/login');
+    })
+  },[]);
+
+  useEffect(()=>{
+    let sumaDetalles = 0;
+    detallesVenta.forEach(detalle => {
+      sumaDetalles += (detalle.cantidad * detalle.precio);
+    });
+    setDatoVenta("valorFinal", sumaDetalles);
+    setValorDetalles(sumaDetalles);
+  },[detallesVenta]);
 
   const cargarProductos = () => {
     return new Promise((resolve, reject) => {       
@@ -159,7 +171,10 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
     let newDetallesVenta = JSON.parse(JSON.stringify(detallesVenta));
     switch (campo) {
       case "producto":
+        console.log(valor);        
         newDetallesVenta[index].producto = valor;
+        newDetallesVenta[index].precioLista = valor.precioLista;
+        newDetallesVenta[index].precio = valor.precioLista;
         break;
       case "cantidad":
         newDetallesVenta[index].cantidad = valor;
@@ -170,74 +185,100 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
       default:
         break;
     }
-    setDetallesVenta(newDetallesVenta);
+    setDetallesVenta(JSON.parse(JSON.stringify(newDetallesVenta)));
   }
 
   const agregarDetalle = () => {
     let newDetallesVenta = JSON.parse(JSON.stringify(detallesVenta));
-    newDetallesVenta.push({producto:{}, cantidad:1, precio:0});
+    newDetallesVenta.push({producto:null, cantidad:1, precio:0});
     setDetallesVenta(newDetallesVenta);
   }
 
   const eliminarDetalle = (index) =>{
+    console.log(index);    
     let newDetallesVenta = JSON.parse(JSON.stringify(detallesVenta));
-    newDetallesVenta.splice(index,1)
-    setDetallesVenta(newDetallesVenta);
+    setDetallesVenta([]);
+    newDetallesVenta.splice(index,1);
+    console.log(newDetallesVenta);    
+    setDetallesVenta(JSON.parse(JSON.stringify(newDetallesVenta)));
   }
 
   const guardarVenta= (datosVenta) => {
     const popup = toast.info("Registrando Venta..", {containerId: 'popup'});
-    const saveData = () => {
+    if(datosVenta.numFactura === "" || datosVenta.cliente === null || datosVenta.valorFinal === "" || datosVenta.tipoPago === null){      
       toast.update(popup, {
-        render: "Registrando..",
-        type: "info",
-        isLoading: true,
+        render: "Falta completar algun dato..",
+        type: "error",
+        autoClose: 1500,
         containerId: 'popup'
       });
-
-      const url = BASE_URL + 'ventas/'
-      getJWT()
-      .then((jwt)=>{        
-        const config = {headers:{authorization:jwt}};
-        datosVenta.detallesVenta = detallesVenta;
-        
-        const datos = {
-          numFactura: datosVenta.numFactura,
-          fechaVenta: datosVenta.fechaVenta,
-          cliente: datosVenta.cliente,
-          tipoPago: datosVenta.tipoPago,
-          valorFinal: datosVenta.valorFinal,
-          observacion: datosVenta.observacion,
-          detallesVenta: datosVenta.detallesVenta
-        }
-
-        axios.post(url, datos, config)
-        .then((resp)=>{
-          if(resp.data.status === "ok"){
-            toast.update(popup, { 
-              render: "Venta Registrada.", 
-              type: "success",  
+    }else{
+      if(datosVenta.detallesVenta.lenght > 0){
+        datosVenta.detallesVenta.forEach(element => {
+          if(element.producto === null || element.cantidad <= 0) {
+            toast.update(popup, {
+              render: "Falta completar algun detalle",
+              type: "error",
+              isLoading: true,
               autoClose: 1500,
-              onClose: () => navigate("/ventas"), 
               containerId: 'popup'
             });
-          }else{        
-            toast.update(popup, { render: resp.data.error, type: "error", isLoading: false,  autoClose: 2500, onClose: () => setDisabled(false), containerId: 'popup' });
+            return
           }
-        })
-      })
-      .catch((error)=>{  
-        toast.update(popup, { render: error, type: "error", isLoading: false,  autoClose: 2500, onClose: () => setDisabled(false), containerId: 'popup' });   
-      })
-    }
+        });
+      }
+      const saveData = () => {
+        toast.update(popup, {
+          render: "Registrando..",
+          type: "info",
+          isLoading: true,
+          containerId: 'popup'
+        });
 
-    showToast("¿Esta seguro que desea registrar esta venta?", saveData, popup);
+        const url = BASE_URL + 'ventas/'
+        getJWT()
+        .then((jwt)=>{        
+          const config = {headers:{authorization:jwt}};
+          datosVenta.detallesVenta = detallesVenta;
+          
+          const datos = {
+            numFactura: datosVenta.numFactura,
+            fechaVenta: datosVenta.fechaVenta,
+            cliente: datosVenta.cliente,
+            tipoPago: datosVenta.tipoPago,
+            valorFinal: datosVenta.valorFinal,
+            observacion: datosVenta.observacion,
+            detallesVenta: datosVenta.detallesVenta
+          }
+
+          axios.post(url, datos, config)
+          .then((resp)=>{
+            if(resp.data.status === "ok"){
+              toast.update(popup, { 
+                render: "Venta Registrada.", 
+                type: "success",  
+                autoClose: 1500,
+                onClose: () => navigate("/ventas"), 
+                containerId: 'popup'
+              });
+            }else{        
+              toast.update(popup, { render: resp.data.error, type: "error", isLoading: false,  autoClose: 2500, onClose: () => setDisabled(false), containerId: 'popup' });
+            }
+          })
+        })
+        .catch((error)=>{  
+          toast.update(popup, { render: error, type: "error", isLoading: false,  autoClose: 2500, onClose: () => setDisabled(false), containerId: 'popup' });   
+        })
+      }
+
+      showToast("¿Esta seguro que desea registrar esta venta?", saveData, popup);
+    }
   }
 
   return (
     <>
       <Header isAdmin={false}/>
-      <div style={{display:'flex', flexDirection:'column'}}>
+      <div style={{display:'flex', flexDirection:'column', minWidth:"1280px", placeSelf:'center'}}>
           <div className="Row">
             <h2>NUEVA VENTA</h2>
           </div>
@@ -265,7 +306,11 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
               </LocalizationProvider>
             </div>
           </div>
-          <div className="Row">
+          <div className="Row"> 
+            <Button
+              variant="contained" className='Boton'
+              onClick={() => navigate("/clientes")}
+            >+</Button>
             <Autocomplete
               value={datosVenta.cliente}
               onChange={(e,n) => {setDatoVenta("cliente", n)}}
@@ -274,10 +319,50 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
               getOptionLabel={(option) => option.documento + " - " + option.apellidos + ", " + option.nombres}
               noOptionsText="Sin resultados"
               size="small"
-              style={{flex: 3, width:'98.5%', margin: '4px 4px'}}
+              style={{flex: 3, width:'98.5%', margin: '10px'}}
               renderInput={(params) => <TextField {...params} label="Cliente"/>}
               disabled={cargando}
             />
+          </div>
+          <div className="Row"> 
+            <TextField
+              style={{ flex: 1, margin: 10 }}
+              className='Dato'
+              label="Observacion"
+              variant="outlined"
+              value={datosVenta.observacion}
+              onChange={(e) => setDatoVenta('observacion', e.target.value)}
+              disabled={cargando}
+              multiline
+            />
+          </div> 
+          <div className="Row" style={{display:"flex", flexDirection:"column"}}>
+              
+            <hr width="90%"/>
+            <div className="Row"> 
+              <Button
+                variant="contained" className='Boton'
+                onClick={() => agregarDetalle()}
+              >+</Button>
+              <h3>Detalles de Venta</h3>
+            </div>
+
+            <div className="Column">
+              {detallesVenta.map((detalle, index) => {           
+                return(              
+                  <DetalleVenta
+                    key={index}
+                    index={index}
+                    productosLista={productosLista}
+                    detalle={detalle}
+                    setDatoDetalle={(index, campo, valor)=>setDatoDetalle(index, campo, valor)}
+                    eliminarDetalle={(index)=>eliminarDetalle(index)}
+                    disabled={cargando}
+                  />
+                )
+              })}
+            </div>
+            <hr width="90%"/>
           </div>
           <div className="Row">
             <FormControl sx={{ m: 1, minWidth: 150 }}> 
@@ -299,6 +384,15 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
             <TextField
               style={{ flex: 1, margin: 10 }}
               className='Dato'
+              label="Valor Detalles"
+              variant="outlined"
+              value={valorDetalles}
+              controlled={true}
+              disabled={true}
+            />
+            <TextField
+              style={{ flex: 1, margin: 10 }}
+              className='Dato'
               label="Valor Final"
               variant="outlined"
               value={datosVenta.valorFinal}
@@ -306,49 +400,8 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
               disabled={cargando}
             />
           </div>          
-          <div className="Row"> 
-            <TextField
-              style={{ flex: 1, margin: 10 }}
-              className='Dato'
-              label="Observacion"
-              variant="outlined"
-              value={datosVenta.observacion}
-              onChange={(e) => setDatoVenta('observacion', e.target.value)}
-              disabled={cargando}
-            />
-          </div>        
-          <div className="Row" style={{display:"flex", flexDirection:"column"}}>
-              
-            <hr width="90%"/>
-            <div className="Row"> 
-
-            <h3>Detalles de Venta</h3>
-            </div>
-
-            <div className="Row"> 
-              <Button
-                variant="contained" className='Boton'
-                onClick={() => agregarDetalle()}
-              >Agregar detalle</Button>
-            </div>
-
-            <div className="Column">
-              {detallesVenta.map((detalle, index) => {           
-                return(              
-                  <DetalleVenta
-                    key={index}
-                    index={index}
-                    productosLista={productosLista}
-                    detallesVenta={detallesVenta}
-                    detalle={detalle}
-                    setDatoDetalle={(index, campo, valor)=>setDatoDetalle(index, campo, valor)}
-                    eliminarDetalle={(index)=>eliminarDetalle(index)}
-                    disabled={cargando}
-                  />
-                )
-              })}
-            </div>
-          </div>
+                 
+          
           <div className='Botonera'>
             <Button variant="contained" className='Boton' 
               disabled={cargando}

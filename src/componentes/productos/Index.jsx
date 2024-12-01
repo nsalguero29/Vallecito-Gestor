@@ -266,8 +266,11 @@ export default function Index ({BASE_URL, checkLogged}){
                         <div style={{display:'flex', flex:2, 
                         flexDirection:'row', width:'100%'}}>
                           <div className="Row" style={{flex:2, placeContent:'space-between', placeItems:'center'}}>
-                          <div style={{flex:1}}>
-                              <strong> Codigo: </strong> {producto.codigoProveedor} 
+                            <div style={{flex:1}}>
+                              <strong> Codigo: </strong> {producto.codigo} 
+                            </div>
+                            <div style={{flex:1}}>
+                              <strong> Codigo Proveedor: </strong> {producto.codigoProveedor} 
                             </div>
                             <div style={{flex:1}}>
                               <strong> Producto: </strong> {producto.producto} 

@@ -221,13 +221,20 @@ export default function Index ({BASE_URL, checkLogged}){
                         </div>
                       </div>
                       <div className="Acciones">
-                        {/* <Accion
+                        <Accion
                           icono="edit"
                           ayuda="Editar"
                           backgroundColor="#00a5e5"
-                          disabled={false}
+                          disabled={true}
                           onClick={() => editar(venta)}
-                        /> */}
+                        />
+                        <Accion
+                          icono="edit"
+                          ayuda="Editar"
+                          backgroundColor="#00a5e5"
+                          disabled={true}
+                          onClick={() => editar(venta)}
+                        />
                       </div>
                     </div>
                     {expandir === index &&
@@ -250,7 +257,7 @@ export default function Index ({BASE_URL, checkLogged}){
                                           <ul key={detalle.id} style={{paddingLeft:25, marginRight: 205}}>
                                             <div className="Row" style={{placeItems:'center'}}>                                
                                               <div style={{flex:1}}>
-                                                <li><strong>{" ("}{detalle.cantidad}{")"}</strong> {detalle.producto.producto} - ${detalle.precio} </li>
+                                                <li><strong>{" (" + detalle.cantidad + ")"}</strong> {detalle.producto.producto + " - $" + detalle.precio} </li>
                                               </div>
                                             </div>                                
                                           </ul>
