@@ -205,7 +205,7 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
 
   const guardarVenta= (datosVenta) => {
     const popup = toast.info("Registrando Venta..", {containerId: 'popup'});
-    if(datosVenta.numFactura === "" || datosVenta.cliente === null || datosVenta.valorFinal === "" || datosVenta.tipoPago === null){      
+    if(datosVenta.cliente === null || datosVenta.valorFinal === "" || datosVenta.tipoPago === null){      
       toast.update(popup, {
         render: "Falta completar algun dato..",
         type: "error",

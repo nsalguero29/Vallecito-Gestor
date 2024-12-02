@@ -18,7 +18,6 @@ export default function Login({logeo, BASE_URL}){
   const navigate = useNavigate();
 
   const login = () =>{
-    //e.preventDefault();
     const popup = toast.loading("Ingresando..", {containerId: 'popup'});
     if(user != "" && pass != ""){
       const url = BASE_URL + "usuarios/login";
@@ -44,7 +43,8 @@ export default function Login({logeo, BASE_URL}){
 
   return(
     <div className='Login LoginContainer'>
-      <form className='Formulario' action="#" onSubmit={login}>
+      <h2>VALLECITO GESTOR</h2>
+      <form className='Formulario' action="#" onSubmit={()=>login()}>
         <h3>Inicie sesión</h3>
         <hr width="80%"/>
         <TextField 

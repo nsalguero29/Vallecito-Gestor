@@ -10,9 +10,10 @@ const MENU = [
   //{ruta:"/bicicletas", titulo:"BICICLETAS"},
   //{ruta:"/arreglos", titulo:"ARREGLOS"},
   {ruta:"/ventas", titulo:"VENTAS"},
-  {ruta:"/productos", titulo:"PRODUCTOS"},
+  {ruta:"/marcas", titulo:"MARCAS"},
   {ruta:"/proveedores", titulo:"PROVEEDORES"},
-  {ruta:"/marcas", titulo:"MARCAS"}
+  {ruta:"/productos", titulo:"PRODUCTOS"},
+  {ruta:"/tiposProductos", titulo:"CATEGORIAS"}
 ]
 
 function Opcion ({ruta, seleccionada, children}){
