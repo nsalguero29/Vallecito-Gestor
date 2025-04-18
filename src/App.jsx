@@ -1,32 +1,31 @@
-import { useState, useEffect} from 'react'
-import { BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
+import { useState, useEffect, useRef} from 'react'
+import { Router, Route, Switch, Redirect, useLocation } from 'wouter';
+
 import { Arreglos, Bicicletas, Index, 
   Login, Logout, Clientes, 
   Marcas, Productos, Proveedores, Admin, Ventas, NuevaVenta, TiposProductos} from './componentes/Main';
-import { Header } from './componentes/comun/Main';
+
 import './App.css'
 import useEnv from './useEnv';
-
 import React from 'react';
-import { Slide, ToastContainer } from 'react-toastify';
-
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer, Slide } from 'react-toastify';
+import { Header } from './componentes/comun/Main';
 import { getJWT } from './componentes/comun/Funciones';
 
 function App() {
+  const {ENV_LOADED, BASENAME} = useEnv();
+  const toastId = useRef(null);
+  const [location, navigate] = useLocation();
 
-  const [BASE_URL, BASENAME] = useEnv();
-  const [logged, setLogged] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const logeo = (value) => {
-    setLogged(value);
-  }
+  const [logged, setLogged] = useState(null);
+  const [user, setUser] = useState(null);
 
   const checkLogged = () =>{
     return new Promise((resolve, reject) => {      
       getJWT()
-      .then((jwt, jwtData) =>{     
+      .then(({jwt, jwtData}) =>{     
         resolve(jwt !== null);
       })
       .catch((error)=>{     
@@ -37,7 +36,7 @@ function App() {
 
   const checkIsAdmin = () =>{
     getJWT()
-    .then((jwt, jwtData) =>{
+    .then(({jwt, jwtData}) =>{
       return jwtData.datos.tipo === 2;
     })
     .catch((error)=>{
@@ -45,43 +44,103 @@ function App() {
     })
   }
 
+  const notificar = ({msg, type = "info", autoClose = 1500, 
+    isLoading = false, callback = null, closeOnClick = true, closeButton = false}) => {
+    if (!toast.isActive(toastId.current)) {
+      toastId.current = toast(msg, { 
+        type, isLoading, autoClose,
+        closeOnClick, 
+        containerId:'popup', toastId, 
+        closeButton,
+        onClose: () => {callback ? callback() : null}
+      });
+    } else {
+      toast.update(toastId.current, { 
+        type, isLoading, autoClose,
+        closeOnClick, render:msg,
+        containerId:'popup', toastId,
+        closeButton, 
+        onClose: () => {callback ? callback() : null}
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (!ENV_LOADED) return;
+    const {logged, user} = getJWT();
+    setLogged(logged);
+    if (logged) setUser(user)
+  },[ENV_LOADED])
+
   return (
-    <BrowserRouter basename={BASENAME}>
-      <div className='App'>
-        <ToastContainer
-          position='top-center'
+    <>
+      <ToastContainer
           containerId="popup"
-        />
-        <Routes>
-            <Route path="/login" element={<Login logeo={()=>logeo(true)} BASE_URL={BASE_URL}/>}/> 
-              
-            <Route path="/" element={ <Index checkLogged={()=>checkLogged()} /> }/> 
-            
-            <Route path="/logout" element={ <Logout checkLogged={()=>checkLogged()} logout={()=>logeo(false)} /> }/>
-
-            <Route path="/productos" element={ <Productos checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-            
-            <Route path="/marcas" element={ <Marcas checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-            
-            <Route path="/tiposProductos" element={ <TiposProductos checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-            
-            <Route path="/proveedores" element={ <Proveedores checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-
-            <Route path="/bicicletas" element={ <Bicicletas checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-
-            <Route path="/clientes" element={ <Clientes checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-
-            <Route path="/admin" element={ <Admin checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-
-            <Route path="/arreglos" element={ <Arreglos checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-
-            <Route path="/ventas" element={ <Ventas checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-            
-            <Route path="/ventas/nueva" element={ <NuevaVenta checkLogged={()=>checkLogged()} logeo={()=>logeo(true)} BASE_URL={BASE_URL}/> }/>
-            
-        </Routes>
-      </div>
-    </BrowserRouter>
+          position="top-center"
+          rtl={false}
+          pauseOnFocusLoss={false}
+          pauseOnHover={false}
+          theme="colored"
+          transition={Slide}
+          autoClose={1500}
+          newestOnTop={true}
+          closeOnClick={false}
+          draggable={false}
+        /> 
+      {ENV_LOADED ?
+        <div className='App'>
+          <Router base={BASENAME}>
+            <Header isAdmin={false}/>
+            <Switch>
+                  <Route path="/login" >
+                    <Login notificar={notificar} />
+                  </Route> 
+                  <Route path="/" > 
+                    <Index notificar={notificar} checkLogged={()=>checkLogged()} />
+                  </Route>
+                  <Route path="/productos" > 
+                    <Productos notificar={notificar} checkLogged={()=>checkLogged()}/>
+                  </Route>                  
+                  <Route path="/marcas" > 
+                    <Marcas notificar={notificar} checkLogged={()=>checkLogged()}/>
+                  </Route>                  
+                  <Route path="/tiposProductos" > 
+                    <TiposProductos notificar={notificar} checkLogged={()=>checkLogged()}/>
+                  </Route>                  
+                  <Route path="/proveedores" > 
+                    <Proveedores notificar={notificar} checkLogged={()=>checkLogged()}/>
+                  </Route>
+                  <Route path="/bicicletas" > 
+                    <Bicicletas notificar={notificar} checkLogged={()=>checkLogged()}/>
+                  </Route>
+                  <Route path="/clientes" > 
+                    <Clientes notificar={notificar} checkLogged={()=>checkLogged()} />
+                  </Route>
+                  <Route path="/admin" > 
+                    <Admin notificar={notificar} checkLogged={()=>checkLogged()} />
+                  </Route>
+                  <Route path="/arreglos" > 
+                    <Arreglos notificar={notificar} checkLogged={()=>checkLogged()} />
+                  </Route>
+                  <Route path="/ventas" > 
+                    <Ventas notificar={notificar} checkLogged={()=>checkLogged()}/>
+                  </Route>                  
+                  <Route path="/ventas/nueva" >
+                    <NuevaVenta notificar={notificar} checkLogged={()=>checkLogged()} />
+                  </Route>
+                  <Route path="/logout" > 
+                    <Logout notificar={notificar} checkLogged={()=>checkLogged()}/>
+                  </Route>
+                  <Route>
+                    <div>404</div>
+                  </Route>
+            </Switch> 
+          </Router>
+        </div>
+      :
+        <span>Cargando...</span>
+      }
+  </>
   )
 }
 

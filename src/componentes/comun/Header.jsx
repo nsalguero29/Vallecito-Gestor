@@ -1,6 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from 'wouter';
+
 import './styles.css';
-import { useEffect, useState } from "react";
 
 //import gobLogo from '../../assets/images/LogoIco.png';
 import Logo from '../../assets/images/Logo.jpg';
@@ -21,7 +21,7 @@ function Opcion ({ruta, seleccionada, children}){
   return(
     <Link 
       className={`Opcion ${seleccionada && 'Seleccionada'}`}
-      to={ruta}
+      href={ruta}
     >
       {children}
     </Link>
@@ -29,11 +29,10 @@ function Opcion ({ruta, seleccionada, children}){
 }
 
 export default function Header({isAdmin}){
-  const location = useLocation();
 
   return(
     <div className="Header">
-      <Link to="/" className="Titulo" style={{display:"flex", width:70, placeContent:'center'}}> 
+      <Link href="/" className="Titulo" style={{display:"flex", width:70, placeContent:'center'}}> 
         <img src={Logo} alt="Logo" style={{width:"100%"}}/> 
       </Link>
       <div className="Opciones">

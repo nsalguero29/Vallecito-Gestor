@@ -15,7 +15,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToast } from '../comun/Funciones';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 
 import axios from 'axios';
 import { getJWT } from '../comun/Funciones';
@@ -71,7 +71,7 @@ function DetalleVenta ({productosLista, detalle, index, setDatoDetalle, eliminar
 }
 
 export default function NuevaVenta ({BASE_URL, checkLogged}){
-  const navigate = useNavigate(); 
+  const [location, navigate] = useLocation(); 
 
   const [datosVenta, setDatoVenta] = useDatosVenta();
 
@@ -119,7 +119,7 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
       oldController = null;
       controller = new AbortController();
       getJWT()
-      .then((jwt)=>{        
+      .then(({jwt})=>{        
         const config = {
           headers:{authorization: jwt},
           signal: controller.signal      
@@ -148,7 +148,7 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
       oldController = null;
       controller = new AbortController();
       getJWT()
-      .then((jwt)=>{        
+      .then(({jwt})=>{        
         const config = {
           headers:{authorization: jwt},
           signal: controller.signal
@@ -237,7 +237,7 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
 
         const url = BASE_URL + 'ventas/'
         getJWT()
-        .then((jwt)=>{        
+        .then(({jwt})=>{        
           const config = {headers:{authorization:jwt}};
           datosVenta.detallesVenta = detallesVenta;
           
@@ -277,7 +277,6 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
 
   return (
     <>
-      <Header isAdmin={false}/>
       <div style={{display:'flex', flexDirection:'column', minWidth:"1280px", placeSelf:'center'}}>
           <div className="Row">
             <h2>NUEVA VENTA</h2>

@@ -6,21 +6,25 @@ import {
 import dayjs from 'dayjs';
 import {Accion, Header, Paginador} from '../comun/Main';
 import ModalProducto from './ModalProducto';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 
 import { showToast } from '../comun/Funciones';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getJWT } from '../comun/Funciones';
+import useEnv from '../../useEnv';
 
 let controller = new AbortController();
 let oldController;
 let datos = [];
 dayjs.locale('es');
 
-export default function Index ({BASE_URL, checkLogged}){
-  const navigate = useNavigate();  
-  useEffect(()=>{
+export default function Index ({checkLogged}){
+  const {ENV_LOADED, BASE_URL} = useEnv();
+
+  const [location, navigate] = useLocation(); 
+  useEffect(() => { 
+    if (!ENV_LOADED) return;
     checkLogged()
     .then(()=>{
       init();  
@@ -28,7 +32,7 @@ export default function Index ({BASE_URL, checkLogged}){
     .catch((error)=>{
       navigate('/login');
     })
-  },[])
+  }, [ENV_LOADED])
 
   const [productos, setProductos] = useState([]);
   const [proveedores, setProveedores] = useState([]);
@@ -56,7 +60,7 @@ export default function Index ({BASE_URL, checkLogged}){
   const cargarProveedores = () => {
       const url = BASE_URL + "proveedores/listar";
       getJWT()
-      .then((jwt)=>{        
+      .then(({jwt})=>{        
         const config = {
           headers:{authorization: jwt}      
         }
@@ -74,7 +78,7 @@ export default function Index ({BASE_URL, checkLogged}){
   const cargarMarcas = () => {
     const url = BASE_URL + "marcas/listar";
     getJWT()
-    .then((jwt)=>{      
+    .then(({jwt})=>{      
       const config = {
         headers:{authorization: jwt}      
       }
@@ -93,7 +97,7 @@ export default function Index ({BASE_URL, checkLogged}){
   const cargarTiposProductos = () => {
     const url = BASE_URL + "tiposProductos/listar";
     getJWT()
-    .then((jwt)=>{      
+    .then(({jwt})=>{      
       const config = {
         headers:{authorization: jwt}      
       }
@@ -129,7 +133,7 @@ export default function Index ({BASE_URL, checkLogged}){
     const bus = busquedaNew!==null? busquedaNew:busqueda;
     const offset = (pag-1)* limite;
     getJWT()
-    .then((jwt)=>{      
+    .then(({jwt})=>{      
       const config = {
         headers:{authorization: jwt},
         params:{
@@ -165,7 +169,7 @@ export default function Index ({BASE_URL, checkLogged}){
       datosProducto.tiposProductoIds = tipos;
       toast.update(popup, {render: "Guardando Producto.", type:'default', containerId:'popup', isLoading:true, autoClose:2500});
       getJWT()
-      .then((jwt)=>{        
+      .then(({jwt})=>{        
         axios({
           method: editar?'put':'post',
           headers:{authorization:jwt},
@@ -196,158 +200,163 @@ export default function Index ({BASE_URL, checkLogged}){
 
   return(
     <>
-      <Header isAdmin={false}/>
-      <div className='' style={{display:'flex', flexDirection:'row'}}>
-        {modalNuevoProducto && 
-          <ModalProducto
-            titulo="Nuevo Producto"
-            proveedoresLista={proveedores}
-            marcasLista={marcas}
-            tiposProductoLista={tiposProducto}
-            guardarProducto={(datosProducto)=>guardarProducto(datosProducto)}
-            salir={() => setModalNuevoProducto(false)}
-            editar={false}
-          />
-        }
+      {ENV_LOADED?
+        <>
+          <div className='' style={{display:'flex', flexDirection:'row'}}>
+            {modalNuevoProducto && 
+              <ModalProducto
+                titulo="Nuevo Producto"
+                proveedoresLista={proveedores}
+                marcasLista={marcas}
+                tiposProductoLista={tiposProducto}
+                guardarProducto={(datosProducto)=>guardarProducto(datosProducto)}
+                salir={() => setModalNuevoProducto(false)}
+                editar={false}
+              />
+            }
 
-        {modalEditarProducto && 
-          <ModalProducto
-            titulo="Editar Producto"
-            proveedoresLista={proveedores}
-            marcasLista={marcas}
-            tiposProductoLista={tiposProducto}
-            guardarProducto={(datosProducto, editar)=>guardarProducto(datosProducto, editar)}
-            salir={() => setModalEditarProducto(false)}
-            datos={datos}
-            editar={true}
-          />
-        }
-        
-        <div style={{display:'flex', flex:1, flexDirection:'column'}}>
-          <div style={{display:'flex', flex:1, placeContent:'center'}}>
-              <h2>LISTADO DE PRODUCTOS</h2>          
-          </div>
-          <div className="Row">
-            <div style={{display:'flex', flex:1, placeItems:'center', marginLeft:10}}>
-              Producto: 
-              <TextField
-                style={{ margin:10, width:350}}
-                className='Dato'
-                label="Buscar Producto"
-                variant="outlined"
-                value={busqueda}
-                onChange={(e) => {setBusqueda(e.target.value); cargarProductos(e.target.value);}}
+            {modalEditarProducto && 
+              <ModalProducto
+                titulo="Editar Producto"
+                proveedoresLista={proveedores}
+                marcasLista={marcas}
+                tiposProductoLista={tiposProducto}
+                guardarProducto={(datosProducto, editar)=>guardarProducto(datosProducto, editar)}
+                salir={() => setModalEditarProducto(false)}
+                datos={datos}
+                editar={true}
+              />
+            }
+            
+            <div style={{display:'flex', flex:1, flexDirection:'column'}}>
+              <div style={{display:'flex', flex:1, placeContent:'center'}}>
+                  <h2>LISTADO DE PRODUCTOS</h2>          
+              </div>
+              <div className="Row">
+                <div style={{display:'flex', flex:1, placeItems:'center', marginLeft:10}}>
+                  Producto: 
+                  <TextField
+                    style={{ margin:10, width:350}}
+                    className='Dato'
+                    label="Buscar Producto"
+                    variant="outlined"
+                    value={busqueda}
+                    onChange={(e) => {setBusqueda(e.target.value); cargarProductos(e.target.value);}}
+                  />
+                </div>
+                <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
+                  <Button variant="contained" className='Boton' onClick={() => { setModalNuevoProducto(true) }}>Nuevo Producto</Button>
+                </div>   
+                <div style={{display:'flex', flex:1}}>
+                </div>        
+              </div>
+              <div className='Listado' style={{display:'flex', flex:1, width:'99%'}}>
+                {productos.length !== 0 ?
+                  productos.map((producto, index)=>{
+                    const tiposProducto = producto.tiposProducto;
+                    return (
+                      <div key={producto.id} className="Listado">
+                        <div className="Detalles">
+                          <div style={{display:'flex', flexDirection:'row', 
+                          alignItems:'center', justifyContent:'center', width:'100%'}}>
+                            <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
+                              {/* <Accion
+                                icono={expandir === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
+                                ayuda="Expandir"
+                                backgroundColor={"lightgrey"}
+                                disabled={false}
+                                onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
+                              /> */}
+                            </div>
+                            <div style={{display:'flex', flex:2, 
+                            flexDirection:'row', width:'100%'}}>
+                              <div className="Row" style={{flex:2, placeContent:'space-between', placeItems:'center'}}>
+                                <div style={{flex:1}}>
+                                  <strong> Codigo: </strong> {producto.codigo} 
+                                </div>
+                                <div style={{flex:1}}>
+                                  <strong> Codigo Proveedor: </strong> {producto.codigoProveedor} 
+                                </div>
+                                <div style={{flex:1}}>
+                                  <strong> Producto: </strong> {producto.producto} 
+                                </div>
+                                <div style={{flex:1}}>
+                                  <strong> Stock: </strong>  {producto.stock} 
+                                </div>
+                                <div style={{flex:1, display:'flex'}}>
+                                  <strong> Precio Lista: ${producto.precioLista} </strong>
+                                </div>
+                                <div style={{flex:1}}>
+                                  <strong> Marca: </strong> {producto.marca.marca}
+                                </div>
+                                <div style={{flex:1}}>
+                                  <strong> Proveedor: </strong> {producto.proveedor.proveedor}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="Acciones">
+                            <Accion
+                              icono="edit"
+                              ayuda="Editar"
+                              backgroundColor="#00a5e5"
+                              disabled={false}
+                              onClick={() => editar(producto)}
+                            />
+                          </div>
+                        </div>
+                        {/* {expandir === index &&
+                          <div className="Preguntas">
+                            <div style={{display:'flex', flexDirection:'row'}}>
+                              <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
+                                <span>
+                                  <strong>producto: </strong> {producto.producto}
+                                </span>
+                                <span>
+                                  {tiposProducto.length !== 0 &&
+                                    <div>
+                                      <div>                          
+                                        {tiposProducto.map((tipoProducto, index2) => {
+                                          return(
+                                            <>
+                                              <ul key={tipoProducto.id} style={{paddingLeft:25, marginRight: 205}}>
+                                                <div className="Row" style={{placeItems:'center'}}>                                
+                                                  <div style={{flex:1}}>
+                                                    <li>{tipoProducto.tipoProducto}<strong>{" ()"}</strong> </li>
+                                                  </div>
+                                                </div>                                
+                                              </ul>
+                                            </>
+                                          )
+                                        })}
+                                      </div>
+                                    </div>
+                                  }
+                                </span>                          
+                              </div>
+                            </div>
+                          </div>
+                        } */}                  
+                      </div>
+                    );
+                  })
+                  :
+                  <center><strong>Sin Resultados</strong></center>
+                }
+              </div>
+              <Paginador
+                page={page}
+                limit={limit}
+                paginasTotales={paginasTotales}
+                cargar={(busqueda, newPage, newLimit)=>cargarProductos(busqueda, newPage, newLimit)}
+                opciones={[5,10,15,25,50]}
               />
             </div>
-            <div style={{display:'flex', flex:1, placeItems:'center', placeContent:'center'}}>
-              <Button variant="contained" className='Boton' onClick={() => { setModalNuevoProducto(true) }}>Nuevo Producto</Button>
-            </div>   
-            <div style={{display:'flex', flex:1}}>
-            </div>        
           </div>
-          <div className='Listado' style={{display:'flex', flex:1, width:'99%'}}>
-            {productos.length !== 0 ?
-              productos.map((producto, index)=>{
-                const tiposProducto = producto.tiposProducto;
-                return (
-                  <div key={producto.id} className="Listado">
-                    <div className="Detalles">
-                      <div style={{display:'flex', flexDirection:'row', 
-                      alignItems:'center', justifyContent:'center', width:'100%'}}>
-                        <div style={{flex:1, margin:'0px 4px', maxWidth:30}}>
-                          {/* <Accion
-                            icono={expandir === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
-                            ayuda="Expandir"
-                            backgroundColor={"lightgrey"}
-                            disabled={false}
-                            onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
-                          /> */}
-                        </div>
-                        <div style={{display:'flex', flex:2, 
-                        flexDirection:'row', width:'100%'}}>
-                          <div className="Row" style={{flex:2, placeContent:'space-between', placeItems:'center'}}>
-                            <div style={{flex:1}}>
-                              <strong> Codigo: </strong> {producto.codigo} 
-                            </div>
-                            <div style={{flex:1}}>
-                              <strong> Codigo Proveedor: </strong> {producto.codigoProveedor} 
-                            </div>
-                            <div style={{flex:1}}>
-                              <strong> Producto: </strong> {producto.producto} 
-                            </div>
-                            <div style={{flex:1}}>
-                              <strong> Stock: </strong>  {producto.stock} 
-                            </div>
-                            <div style={{flex:1, display:'flex'}}>
-                              <strong> Precio Lista: ${producto.precioLista} </strong>
-                            </div>
-                            <div style={{flex:1}}>
-                              <strong> Marca: </strong> {producto.marca.marca}
-                            </div>
-                            <div style={{flex:1}}>
-                              <strong> Proveedor: </strong> {producto.proveedor.proveedor}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="Acciones">
-                        <Accion
-                          icono="edit"
-                          ayuda="Editar"
-                          backgroundColor="#00a5e5"
-                          disabled={false}
-                          onClick={() => editar(producto)}
-                        />
-                      </div>
-                    </div>
-                    {/* {expandir === index &&
-                      <div className="Preguntas">
-                        <div style={{display:'flex', flexDirection:'row'}}>
-                          <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
-                            <span>
-                              <strong>producto: </strong> {producto.producto}
-                            </span>
-                            <span>
-                              {tiposProducto.length !== 0 &&
-                                <div>
-                                  <div>                          
-                                    {tiposProducto.map((tipoProducto, index2) => {
-                                      return(
-                                        <>
-                                          <ul key={tipoProducto.id} style={{paddingLeft:25, marginRight: 205}}>
-                                            <div className="Row" style={{placeItems:'center'}}>                                
-                                              <div style={{flex:1}}>
-                                                <li>{tipoProducto.tipoProducto}<strong>{" ()"}</strong> </li>
-                                              </div>
-                                            </div>                                
-                                          </ul>
-                                        </>
-                                      )
-                                    })}
-                                  </div>
-                                </div>
-                              }
-                            </span>                          
-                          </div>
-                        </div>
-                      </div>
-                    } */}                  
-                  </div>
-                );
-              })
-              :
-              <center><strong>Sin Resultados</strong></center>
-            }
-          </div>
-          <Paginador
-            page={page}
-            limit={limit}
-            paginasTotales={paginasTotales}
-            cargar={(busqueda, newPage, newLimit)=>cargarProductos(busqueda, newPage, newLimit)}
-            opciones={[5,10,15,25,50]}
-          />
-        </div>
-      </div>
+        </>
+        :
+        <center><strong>CARGANDO...</strong></center>
+        }
     </>
   )
 }

@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom"
+import { Link } from "wouter"
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import Header from "../comun/Header";
 function Tarjeta ({titulo, url, icono}){
   return(
-    <Link to={url} className="Tarjeta">
+    <Link href={url} className="Tarjeta">
       <span className="material-icons Icono">{icono}</span>
       
       {titulo}
@@ -14,7 +14,8 @@ function Tarjeta ({titulo, url, icono}){
 
 
 export default function Index ({checkLogged}){
-  const navigate = useNavigate();  
+  const [location, navigate] = useLocation();
+  
   useEffect(()=>{
     checkLogged()
     .then(()=>{
@@ -26,7 +27,6 @@ export default function Index ({checkLogged}){
 
   return(
     <>
-      <Header isAdmin={false}/>
       <div className='Container Index' >
           <Tarjeta url="/clientes" titulo="Clientes" icono=""/>
           {/*<Tarjeta url="/bicicletas" titulo="Bicicletas" icono=""/>

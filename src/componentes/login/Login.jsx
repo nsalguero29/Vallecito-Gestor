@@ -1,50 +1,60 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TextField, InputAdornment, IconButton} from '@mui/material';
 import { Person, VpnKey, VisibilityOff, Visibility } from '@mui/icons-material';
 import { Boton, Header } from '../comun/Main';
 import './styles.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useSearch } from "wouter";
 
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
-import { getJWT } from '../comun/Funciones';
+import { jwtDecode } from "jwt-decode";
+import useEnv from '../../useEnv';
 
-export default function Login({logeo, BASE_URL}){
+export default function Login({notificar, logeo}){
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
-  const navigate = useNavigate();
+  const [, navigate] = useLocation();
+  const {ENV_LOADED, BASE_URL} = useEnv();
 
   const login = () =>{
-    const popup = toast.loading("Ingresando..", {containerId: 'popup'});
     if(user != "" && pass != ""){
-      const url = BASE_URL + "usuarios/login";
+      notificar({msg:"Ingresando.."});
+      const url =  BASE_URL + "usuarios/login";
       axios.post(url, {user, pass})
       .then((resp)=>{
-        //console.log({resp});        
         if(resp.data.status === "ok"){
-          const { token } = resp.data;
-          Cookies.set('jwt', token, { expires: 7 });
-          toast.update(popup, { render: "Ingreso con exito", type: "success", isLoading: false,  autoClose: 2500, containerId: 'popup', onClose: () => {logeo(); navigate("/");} });
+          const token = jwtDecode(resp.data.token);
+          const user = token.data;
+          Cookies.set('jwt', resp.data.token, { expires: 7 });
+          Cookies.set('user', JSON.stringify(user));
+          notificar({msg:"Ingreso con exito", type: "success", isLoading: false, callback: () => {navigate("/");}})
+          //toast.update(popup, { render: "Ingreso con exito", type: "success", isLoading: false,  autoClose: 2500, containerId: 'popup', onClose: () => {logeo(); navigate("/");} });
         } 
         else {
-          toast.update(popup, { render: resp.data.error, type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
+          notificar({msg:resp.data.error, type: "error"});
+          //toast.update(popup, { render: resp.data.error, type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
         }
       })
       .catch((error)=>{
-        toast.update(popup, { render: error, type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
+        notificar({msg:resp.data.error, type: "error"});
+        //toast.update(popup, { render: error, type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
       })
     }else{
-      toast.update(popup, { render: "Complete todos los campos", type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
+      notificar({msg:"Complete todos los campos", type: "error"});
+      //toast.update(popup, { render: "Complete todos los campos", type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
     }
   }
+
+  useEffect(() => {
+    if (!ENV_LOADED) return;
+  },[ENV_LOADED])
 
   return(
     <div className='Login LoginContainer'>
       <h2>VALLECITO GESTOR</h2>
-      <form className='Formulario' action="#" onSubmit={()=>login()}>
+      <form className='Formulario' action="#" onSubmit={login}>
         <h3>Inicie sesión</h3>
         <hr width="80%"/>
         <TextField 
@@ -82,7 +92,7 @@ export default function Login({logeo, BASE_URL}){
         />
         <Boton
           type="submit" className="Boton" variant="contained" 
-          onClick={() => login()}
+          onClick={(e) => login(e)}
           color="#A3D0D0"
         >Ingresar</Boton>
       </form>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { useEffect, useState } from 'react';
 import Header from "../comun/Header";
+import useEnv from '../../useEnv';
 
 function Tarjeta ({titulo, url, icono}){
   return(
@@ -13,17 +14,32 @@ function Tarjeta ({titulo, url, icono}){
 }
 
 export default function Index ({}){
+  const {ENV_LOADED, BASE_URL} = useEnv();
 
   const [widthScreen, setWidthScreen] = useState(0);
 
-  useEffect(() => setWidthScreen(window.screen.width),[])
+  useEffect(() => { 
+    if (!ENV_LOADED) return;
+    checkLogged()
+    .then(()=>{
+      init();  
+    })
+    .catch((error)=>{
+      navigate('/login');
+    })
+  }, [ENV_LOADED])
 
   return(
     <>
-      <Header isAdmin={false}/>
-      <div className='Container Index' style={{ alignContent: widthScreen > 550? "center" :"flex-start"}}>
-          ADMIN
-      </div>
-    </>    
+      {ENV_LOADED?
+        <>
+          <div className='Container Index' style={{ alignContent: widthScreen > 550? "center" :"flex-start"}}>
+              ADMIN
+          </div>
+        </>  
+        :
+        <center><strong>CARGANDO...</strong></center>
+        }
+    </>  
   )
 }

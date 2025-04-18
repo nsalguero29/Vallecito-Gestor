@@ -11,6 +11,7 @@ export default function Logout({logout}){
     getJWT()
     .then(() => {
       Cookies.remove("jwt");
+      Cookies.remove("user");
       navigate("/");
     })
     .catch(() => navigate("/ingresar") );

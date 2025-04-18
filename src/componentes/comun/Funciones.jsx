@@ -11,7 +11,7 @@ const cargarMarcas = (BASE_URL) => {
   new Promise((resolve, reject) => { 
     const url = BASE_URL + "marcas/listar";
     getJWT()
-    .then((jwt)=>{      
+    .then(({jwt})=>{      
       const config = {
         headers:{authorization: jwt}      
       }
@@ -33,7 +33,7 @@ const cargarClientes = (BASE_URL) => {
   new Promise((resolve, reject) => { 
     const url = BASE_URL + "clientes/listar";
     getJWT()
-    .then((jwt)=>{      
+    .then(({jwt})=>{      
       const config = {
         headers:{authorization: jwt}      
       }
@@ -55,7 +55,7 @@ const cargarProveedores = (BASE_URL) => {
   new Promise((resolve, reject) => {
     const url = BASE_URL + "proveedores/listar";
     getJWT()
-    .then((jwt)=>{      
+    .then(({jwt})=>{      
       const config = {
         headers:{authorization: jwt}      
       }
@@ -123,8 +123,7 @@ const getJWT = function() {
   return new Promise((resolve, reject) => {
     const jwt = Cookies.get('jwt');
     if (jwt) {
-      const jwtData = jwtDecode(jwt); 
-      //console.log({jwtData});      
+      const jwtData = jwtDecode(jwt);   
       checkTokenExpirado(jwtData.exp)
       .then(()=>{
         return resolve({jwt, jwtData});
