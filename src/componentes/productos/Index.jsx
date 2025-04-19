@@ -19,19 +19,13 @@ let oldController;
 let datos = [];
 dayjs.locale('es');
 
-export default function Index ({checkLogged}){
+export default function Index ({notificar}){
   const {ENV_LOADED, BASE_URL} = useEnv();
 
   const [location, navigate] = useLocation(); 
   useEffect(() => { 
     if (!ENV_LOADED) return;
-    checkLogged()
-    .then(()=>{
-      init();  
-    })
-    .catch((error)=>{
-      navigate('/login');
-    })
+    init();  
   }, [ENV_LOADED])
 
   const [productos, setProductos] = useState([]);

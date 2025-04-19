@@ -20,13 +20,7 @@ export default function Index ({}){
 
   useEffect(() => { 
     if (!ENV_LOADED) return;
-    checkLogged()
-    .then(()=>{
-      init();  
-    })
-    .catch((error)=>{
-      navigate('/login');
-    })
+    init();  
   }, [ENV_LOADED])
 
   return(

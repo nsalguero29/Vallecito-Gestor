@@ -1,19 +1,23 @@
 import { useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import Cookies from 'js-cookie';
-import { getJWT } from '../comun/Funciones';
+import useEnv from '../../useEnv';
 
-export default function Logout({logout}){
+export default function Logout({checkLogged}){
+  const {ENV_LOADED, BASE_URL} = useEnv();
+  const [location, navigate] = useLocation();
 
-  const navigate = useNavigate();
-
-  useEffect(() => {   
-    getJWT()
-    .then(() => {
-      Cookies.remove("jwt");
-      Cookies.remove("user");
-      navigate("/");
-    })
-    .catch(() => navigate("/ingresar") );
-  }, [])
+  useEffect(() => { 
+    if (!ENV_LOADED) return;
+    Cookies.remove("jwt");
+    Cookies.remove("user");
+    checkLogged();
+    navigate("/login");
+  }, [ENV_LOADED])
+  
+  return (
+    <>
+      <span>Saliendo...</span>
+    </>
+  )
 }

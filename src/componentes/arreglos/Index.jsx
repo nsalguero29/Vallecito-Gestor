@@ -20,13 +20,7 @@ export default function Index ({notificar, checkLogged}){
    
   useEffect(() => { 
     if (!ENV_LOADED) return;
-    checkLogged()
-    .then(()=>{
-      init();  
-    })
-    .catch((error)=>{
-      navigate('/login');
-    })
+    init();  
   }, [ENV_LOADED])
 
   const [arreglos, setArreglos] = useState([]);

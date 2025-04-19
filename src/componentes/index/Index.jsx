@@ -1,30 +1,15 @@
 import { Link } from "wouter"
-import { useEffect, useState } from 'react';
-import { useLocation } from 'wouter';
-import Header from "../comun/Header";
 function Tarjeta ({titulo, url, icono}){
   return(
     <Link href={url} className="Tarjeta">
       <span className="material-icons Icono">{icono}</span>
-      
       {titulo}
     </Link>
   )
 }
 
 
-export default function Index ({checkLogged}){
-  const [location, navigate] = useLocation();
-  
-  useEffect(()=>{
-    checkLogged()
-    .then(()=>{
-    })
-    .catch((error)=>{
-      navigate('/login');
-    })
-  },[])
-
+export default function Index ({}){
   return(
     <>
       <div className='Container Index' >

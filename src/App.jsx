@@ -19,18 +19,18 @@ function App() {
 
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const [logged, setLogged] = useState(null);
   const [user, setUser] = useState(null);
 
-  const checkLogged = () =>{
-    return new Promise((resolve, reject) => {      
-      getJWT()
-      .then(({jwt, jwtData}) =>{     
-        resolve(jwt !== null);
-      })
-      .catch((error)=>{     
-        reject();
-      })
+  const checkLogged = () =>{      
+    getJWT()
+    .then(({user, logged}) =>{
+      console.log(user);
+      setUser(user);     
+      return (logged);
+    })
+    .catch((error)=>{ 
+      setUser(null);
+      return false;
     })
   }
 
@@ -67,9 +67,7 @@ function App() {
 
   useEffect(() => {
     if (!ENV_LOADED) return;
-    const {logged, user} = getJWT();
-    setLogged(logged);
-    if (logged) setUser(user)
+    checkLogged();
   },[ENV_LOADED])
 
   return (
@@ -89,12 +87,11 @@ function App() {
         /> 
       {ENV_LOADED ?
         <div className='App'>
-          <Router base={BASENAME}>
-            <Header isAdmin={false}/>
-            <Switch>
-                  <Route path="/login" >
-                    <Login notificar={notificar} />
-                  </Route> 
+          <Router base={BASENAME}>  
+            {(user !== null && user !== undefined) ?
+              <>
+                <Header isAdmin={false}/>
+                <Switch>
                   <Route path="/" > 
                     <Index notificar={notificar} checkLogged={()=>checkLogged()} />
                   </Route>
@@ -131,10 +128,24 @@ function App() {
                   <Route path="/logout" > 
                     <Logout notificar={notificar} checkLogged={()=>checkLogged()}/>
                   </Route>
-                  <Route>
-                    <div>404</div>
+                  <Route path="/*" > 
+                    <Redirect to={'/'} />
                   </Route>
-            </Switch> 
+                </Switch>
+
+              </>
+            : 
+              <>
+                <Switch>
+                  <Route path="/login" >
+                    <Login notificar={notificar} checkLogged={()=>checkLogged()}/>
+                  </Route>
+                  <Route path="/*" > 
+                    <Redirect to={'/login'} />
+                  </Route>
+                </Switch>
+              </>
+            }
           </Router>
         </div>
       :

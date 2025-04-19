@@ -11,11 +11,11 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from "jwt-decode";
 import useEnv from '../../useEnv';
 
-export default function Login({notificar, logeo}){
+export default function Login({notificar, checkLogged}){
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const {ENV_LOADED, BASE_URL} = useEnv();
 
   const login = () =>{
@@ -29,21 +29,17 @@ export default function Login({notificar, logeo}){
           const user = token.data;
           Cookies.set('jwt', resp.data.token, { expires: 7 });
           Cookies.set('user', JSON.stringify(user));
-          notificar({msg:"Ingreso con exito", type: "success", isLoading: false, callback: () => {navigate("/");}})
-          //toast.update(popup, { render: "Ingreso con exito", type: "success", isLoading: false,  autoClose: 2500, containerId: 'popup', onClose: () => {logeo(); navigate("/");} });
+          notificar({msg:"Ingreso con exito", type: "success", isLoading: false, callback: () => {checkLogged(); navigate("/")}})
         } 
         else {
           notificar({msg:resp.data.error, type: "error"});
-          //toast.update(popup, { render: resp.data.error, type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
         }
       })
       .catch((error)=>{
         notificar({msg:resp.data.error, type: "error"});
-        //toast.update(popup, { render: error, type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
       })
     }else{
       notificar({msg:"Complete todos los campos", type: "error"});
-      //toast.update(popup, { render: "Complete todos los campos", type: "error", isLoading: false,  autoClose: 2500, containerId: 'popup' });
     }
   }
 

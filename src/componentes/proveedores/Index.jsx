@@ -14,19 +14,13 @@ let controller = new AbortController();
 let oldController;
 dayjs.locale('es');
 
-export default function Index ({notificar, checkLogged}){
+export default function Index ({notificar}){
   const {ENV_LOADED, BASE_URL} = useEnv();
   const [location, navigate] = useLocation();
 
   useEffect(() => { 
     if (!ENV_LOADED) return;
-    checkLogged()
-    .then(()=>{
-      init();  
-    })
-    .catch((error)=>{
-      navigate('/login');
-    })
+    init();
   }, [ENV_LOADED])
 
   const [proveedores, setProveedores] = useState([]);

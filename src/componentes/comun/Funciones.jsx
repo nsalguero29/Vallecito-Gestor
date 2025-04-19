@@ -122,17 +122,21 @@ const checkTokenExpirado = function(fechaString) {
 const getJWT = function() {
   return new Promise((resolve, reject) => {
     const jwt = Cookies.get('jwt');
+    let user = Cookies.get('user');
     if (jwt) {
+      if (user !== undefined && user !== null)
+        user = JSON.parse(user);
+
       const jwtData = jwtDecode(jwt);   
       checkTokenExpirado(jwtData.exp)
       .then(()=>{
-        return resolve({jwt, jwtData});
+        return resolve({jwt, jwtData, user, logged: (jwt !== undefined && jwt !== null)});
       })
       .catch(()=>{
         return reject("Token expirado");
       })
     }else{
-      return reject("Sin token");
+      return reject({jwt:null, jwtData:null, user:null, logged:false});
     }
   })
 }
