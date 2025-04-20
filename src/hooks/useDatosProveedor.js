@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export function useDatosProveedor (){
   
+  const [id, setId] = useState(-1);
   const [proveedor, setProveedor] = useState("");
   const [nombreContacto, setnombreContacto] = useState("");
   const [direccion, setDireccion] = useState("");
@@ -12,6 +13,7 @@ export function useDatosProveedor (){
 
   const setDatoProveedor = (tipo, valor) => {
     switch (tipo) {
+      case 'id': return (setId(valor));
       case 'proveedor': return (setProveedor(valor));
       case 'nombreContacto': return (setnombreContacto(valor));
       case 'direccion': return (setDireccion(valor));
@@ -23,7 +25,7 @@ export function useDatosProveedor (){
     }
   }
 
-  return ([{ proveedor, nombreContacto, 
+  return ([{id, proveedor, nombreContacto, 
     direccion, telefono, sitioWeb, email, instagram
   }, setDatoProveedor]);
 }

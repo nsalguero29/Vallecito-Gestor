@@ -4,7 +4,7 @@ import {
 	Button, TextField, Autocomplete
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Header, Paginador} from '../comun/Main';
+import {Accion, Paginador, GenerarMessage} from '../comun/Main';
 import ModalProveedor from "./ModalProveedor";
 import { getJWT } from '../comun/Funciones';
 import { useLocation } from 'wouter';
@@ -12,11 +12,13 @@ import useEnv from '../../useEnv';
 
 let controller = new AbortController();
 let oldController;
+let datos = [];
 dayjs.locale('es');
 
 export default function Index ({notificar}){
   const {ENV_LOADED, BASE_URL} = useEnv();
   const [location, navigate] = useLocation();
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => { 
     if (!ENV_LOADED) return;
@@ -25,6 +27,7 @@ export default function Index ({notificar}){
 
   const [proveedores, setProveedores] = useState([]);
   const [modalNuevoProveedor, setModalNuevoProveedor] = useState(false);
+  const [modalEditarProveedor, setModalEditarProveedor] = useState(false); 
 
   const [expandir, setExpandir] = useState();
   const [expandir2, setExpandir2] = useState();
@@ -74,6 +77,7 @@ export default function Index ({notificar}){
           setProveedores(resp.data.proveedores);
           const paginasTotales = Math.ceil(resp.data.total / limite);
           setPaginasTotales(paginasTotales);
+          setDisabled(false);
         }
       })
     })
@@ -81,25 +85,64 @@ export default function Index ({notificar}){
   }
 
   const guardarProveedor = (datosProveedor, editar = false) => {
-    if (window.confirm("¿Esta seguro que desea registrar un proveedor?")){
-      const url = BASE_URL + 'proveedores/'
-      getJWT()
-      .then(({jwt})=>{        
-        const config = {headers:{authorization:jwt}};
+    setDisabled(false);
+    let message = GenerarMessage(("¿Esta seguro que desea "+ (editar?"editar":"guardar") +" este proveedor?"), ()=>saveProveedor(datosProveedor, editar), ()=>{setDisabled(false)}, "Guardar");
+    notificar({
+      msg: message, 
+      type: "info", 
+      autoClose: false,  
+      closeOnClick: false});    
+  }
+
+  const saveProveedor = (datosProveedor, editar) =>{    
+    const url = BASE_URL +  'proveedores/'
+    getJWT()
+    .then(({jwt})=>{        
+      const config = {headers:{authorization:jwt}};
+      if(!editar){
         axios.post(url, datosProveedor, config)
         .then((res) => {
           if (res.data.status === "ok"){
-            alert("Guardado");
-            cargarProveedores();
+            notificar({ 
+              msg: "Proveedor Guardado.",
+              type: "success",
+              callback: () => {
+                cargarProveedores();
+                setModalNuevoProveedor(false);
+                setModalEditarProveedor(false);
+              }
+            });
           } else {
-            alert("Error")
+            notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
           }
         })
-      })
-      .catch((error) => {
-        alert("Error")
-      })
-    }
+      }else{
+        axios.put(url, datosProveedor, config)
+        .then((res) => {
+          if (res.data.status === "ok"){
+            notificar({ 
+              msg: "Proveedor Editado.",
+              type: "success",
+              callback: () => {
+                cargarProveedores();
+                setModalNuevoProveedor(false);
+                setModalEditarProveedor(false);
+              }
+            });
+          } else {
+            notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
+          }
+        })
+      }
+    })
+    .catch((error) => {
+      notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
+    })
+  }
+
+  const editar = (proveedor) =>{
+    datos = proveedor;
+    setModalEditarProveedor(true);
   }
 
   return(
@@ -112,6 +155,19 @@ export default function Index ({notificar}){
                 titulo="Nuevo Proveedor"
                 guardarProveedor={(datosProveedor)=>guardarProveedor(datosProveedor)}
                 salir={() => setModalNuevoProveedor(false)}
+                disabled={disabled} 
+                setDisabled={setDisabled}
+              />
+            }
+            {modalEditarProveedor && 
+              <ModalProveedor
+                titulo="Editar Proveedor"
+                guardarProveedor={(datosProveedor, editar)=>guardarProveedor(datosProveedor, editar)}
+                salir={() => setModalEditarProveedor(false)}
+                datos={datos}
+                editar={true}
+                disabled={disabled} 
+                setDisabled={setDisabled}
               />
             }
             
@@ -151,7 +207,7 @@ export default function Index ({notificar}){
                               icono={expandir === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
                               ayuda="Expandir"
                               backgroundColor={"lightgrey"}
-                              disabled={false}
+                              disabled={disabled}
                               onClick={() =>{expandir === index ? setExpandir() : setExpandir(index)}}
                             />
                           </div>
@@ -175,18 +231,24 @@ export default function Index ({notificar}){
                           </div>
                         </div>
                         <div className="Acciones">
-                          
+                            <Accion
+                              icono="edit"
+                              ayuda="Editar"
+                              backgroundColor="#00a5e5"
+                              disabled={disabled}
+                              onClick={() => editar(proveedor)}
+                            />
                         </div>
                       </div>
                       {expandir === index &&
-                        <div className="Preguntas">
+                        <div className="Proveedores">
                           <div style={{display:'flex', flexDirection:'row'}}>
                             <div style={{flex: 1, display:'flex', flexDirection:'column'}}>
                               <span>
                                 <strong>Proveedor: </strong> {proveedor.proveedor}
                               </span>
                               <span>
-                                <strong>Contacto: </strong> {proveedor.nombreContacto}
+                                <strong>Persona Contacto: </strong> {proveedor.nombreContacto}
                               </span>
                               <span>
                                 <strong>Direccion: </strong> {proveedor.direccion}
@@ -208,7 +270,7 @@ export default function Index ({notificar}){
                                   icono={expandir2 === index ? 'keyboard_arrow_up': 'keyboard_arrow_down'}
                                   ayuda="Expandir"
                                   backgroundColor={"lightgrey"}
-                                  disabled={false}
+                                  disabled={disabled}
                                   onClick={() =>{expandir2 === index ? setExpandir2() : setExpandir2(index)}}
                                 />
                                 <strong style={{flex:1}}>PRODUCTOS: </strong>

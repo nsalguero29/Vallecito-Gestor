@@ -7,14 +7,10 @@ import {
 import { useDatosProducto } from '../../hooks/useDatosProducto';
 import { useEffect, useState } from "react";
 
-import React from 'react';
-
-
 export default function ModalProducto ({guardarProducto, proveedoresLista, tiposProductoLista,
-  marcasLista, salir, titulo, datos, editar}){
+  marcasLista, disabled, salir, titulo, datos, editar}){
 
     const [datosProducto, setDatoProducto] = useDatosProducto(null);
-    const [disabled, setDisabled] = useState(false);
 
     useEffect(()=>{
       if(editar){
@@ -140,7 +136,7 @@ export default function ModalProducto ({guardarProducto, proveedoresLista, tipos
           </div>        
           <div className='Botonera'>
             <Button variant="contained" className='Boton' disabled={disabled}
-             onClick={() => {setDisabled(true); guardarProducto(datosProducto, editar) }}>Guardar Nuevo Producto</Button>
+             onClick={() => {guardarProducto(datosProducto, editar)}}>Guardar Nuevo Producto</Button>
           </div> 
         </div>
         </BaseModal>

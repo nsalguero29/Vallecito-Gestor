@@ -4,7 +4,7 @@ import {
 	Button, TextField
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Header, Paginador} from '../comun/Main';
+import {Accion, Paginador} from '../comun/Main';
 import ModalProducto from './ModalProducto';
 import { useLocation } from 'wouter';
 
@@ -21,8 +21,9 @@ dayjs.locale('es');
 
 export default function Index ({notificar}){
   const {ENV_LOADED, BASE_URL} = useEnv();
-
   const [location, navigate] = useLocation(); 
+  const [disabled, setDisabled] = useState(false);
+
   useEffect(() => { 
     if (!ENV_LOADED) return;
     init();  
@@ -34,9 +35,6 @@ export default function Index ({notificar}){
   const [tiposProducto, setTiposProducto] = useState([]);
   const [modalNuevoProducto, setModalNuevoProducto] = useState(false);
   const [modalEditarProducto, setModalEditarProducto] = useState(false); 
-
-  const [expandir, setExpandir] = useState();
-  const [expandir2, setExpandir2] = useState();
 
   const [busqueda, setBusqueda] = useState("");
   const [page, setPage] = useState(1);
@@ -206,6 +204,8 @@ export default function Index ({notificar}){
                 guardarProducto={(datosProducto)=>guardarProducto(datosProducto)}
                 salir={() => setModalNuevoProducto(false)}
                 editar={false}
+                disabled={disabled} 
+                setDisabled={setDisabled}
               />
             }
 
@@ -219,6 +219,8 @@ export default function Index ({notificar}){
                 salir={() => setModalEditarProducto(false)}
                 datos={datos}
                 editar={true}
+                disabled={disabled} 
+                setDisabled={setDisabled}
               />
             }
             

@@ -24,7 +24,6 @@ function App() {
   const checkLogged = () =>{      
     getJWT()
     .then(({user, logged}) =>{
-      console.log(user);
       setUser(user);     
       return (logged);
     })

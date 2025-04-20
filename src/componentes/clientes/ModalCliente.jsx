@@ -8,10 +8,27 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useDatosCliente } from '../../hooks/useDatosCliente';
+import { useEffect } from "react";
 
-export default function ModalCliente ({guardarCliente, salir, titulo}){
+
+export default function ModalCliente ({guardarCliente, salir, titulo,
+    disabled, setDisabled, datos, editar}){
 
     const [datosCliente, setDatoCliente] = useDatosCliente(null);
+  
+    useEffect(()=>{
+      if(editar){
+        setDatoCliente('id', datos.id);
+        setDatoCliente('documento', datos.documento);
+        setDatoCliente('apellidos', datos.apellidos);
+        setDatoCliente('nombres', datos.nombres);
+        setDatoCliente('fechaNac', datos.fechaNac);
+        setDatoCliente('direccion', datos.direccion);
+        setDatoCliente('telefono', datos.telefono);
+        setDatoCliente('email', datos.email);
+        setDatoCliente('instagram', datos.instagram);
+      }
+    }, [])
 
     return (
         <BaseModal titulo={titulo} salir={()=>salir()}>
@@ -22,7 +39,8 @@ export default function ModalCliente ({guardarCliente, salir, titulo}){
             className='Dato'
             label="Documento"
             variant="outlined"
-            value={datosCliente.documento}
+              disabled={disabled}
+              value={datosCliente.documento}
             onChange={(e) => setDatoCliente('documento', e.target.value)}
           />
           <div style={{flex:'flex', placeItems:'center', placeContent:'center'}}>
@@ -31,7 +49,8 @@ export default function ModalCliente ({guardarCliente, salir, titulo}){
                 label="Fecha de Nacimiento" 
                 value={dayjs(datosCliente.fechaNac)}
                 views={['day', 'month', 'year']}
-                disableFuture={true}
+              disabled={disabled}
+              disableFuture={false}
                 format="DD/MM/YYYY"
                 onChange={(e) => setDatoCliente('fechaNac', e)}              
               />
@@ -45,7 +64,8 @@ export default function ModalCliente ({guardarCliente, salir, titulo}){
             className='Dato'
             label="Apellidos"
             variant="outlined"
-            value={datosCliente.apellidos}
+              disabled={disabled}
+              value={datosCliente.apellidos}
             onChange={(e) => setDatoCliente('apellidos', e.target.value)}
           />
           <TextField
@@ -53,7 +73,8 @@ export default function ModalCliente ({guardarCliente, salir, titulo}){
             className='Dato'
             label="Nombres"
             variant="outlined"
-            value={datosCliente.nombres}
+              disabled={disabled}
+              value={datosCliente.nombres}
             onChange={(e) => setDatoCliente('nombres', e.target.value)}
           />
         </div>
@@ -63,7 +84,8 @@ export default function ModalCliente ({guardarCliente, salir, titulo}){
             className='Dato'
             label="Direccion"
             variant="outlined"
-            value={datosCliente.direccion}
+              disabled={disabled}
+              value={datosCliente.direccion}
             onChange={(e) => setDatoCliente('direccion', e.target.value)}
           />
           <TextField
@@ -71,7 +93,8 @@ export default function ModalCliente ({guardarCliente, salir, titulo}){
             className='Dato'
             label="Telefono"
             variant="outlined"
-            value={datosCliente.telefono}
+              disabled={disabled}
+              value={datosCliente.telefono}
             onChange={(e) => setDatoCliente('telefono', e.target.value)}
           />
         </div>
@@ -81,7 +104,8 @@ export default function ModalCliente ({guardarCliente, salir, titulo}){
             className='Dato'
             label="E-Mail"
             variant="outlined"
-            value={datosCliente.email}
+              disabled={disabled}
+              value={datosCliente.email}
             onChange={(e) => setDatoCliente('email', e.target.value)}
           />
           <TextField
@@ -89,12 +113,20 @@ export default function ModalCliente ({guardarCliente, salir, titulo}){
             className='Dato'
             label="Instagram"
             variant="outlined"
-            value={datosCliente.instagram}
+              disabled={disabled}
+              value={datosCliente.instagram}
             onChange={(e) => setDatoCliente('instagram', e.target.value)}
           />
         </div>
         <div className="Linea" style={{display:'flex', placeContent:'center'}}>
-          <Button variant="contained" className='Boton' onClick={() => { salir(); guardarCliente(datosCliente); }}>Guardar Nuevo Cliente</Button>
+          <Button variant="contained" className='Boton' 
+              disabled={disabled}
+              onClick={() => { 
+              setDisabled(true);  
+              guardarCliente(datosCliente, editar); 
+            }}>
+            Guardar Cliente
+          </Button>
         </div>
         </div>
         </BaseModal>

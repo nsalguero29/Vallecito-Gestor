@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export function useDatosCliente (){
   
-  const [uuid, setUUID] = useState("");
+  const [id, setId] = useState(-1);
   const [documento, setDocumento] = useState("");
   const [apellidos, setApellidos] = useState("");
   const [nombres, setNombres] = useState("");
@@ -14,7 +14,7 @@ export function useDatosCliente (){
 
   const setDatoCliente = (tipo, valor) => {
     switch (tipo) {
-      case 'uuid': return (setUUID(valor));
+      case 'id': return (setId(valor));
       case 'documento': return (setDocumento(valor));
       case 'apellidos': return (setApellidos(valor));
       case 'nombres': return (setNombres(valor));
@@ -27,7 +27,7 @@ export function useDatosCliente (){
     }
   }
 
-  return ([{ uuid, documento, apellidos, nombres, fechaNac, 
+  return ([{ id, documento, apellidos, nombres, fechaNac, 
     direccion, telefono,email, instagram
   }, setDatoCliente]);
 }

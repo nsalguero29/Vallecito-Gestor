@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { TextField, InputAdornment, IconButton} from '@mui/material';
+import { TextField, InputAdornment, IconButton, Button} from '@mui/material';
 import { Person, VpnKey, VisibilityOff, Visibility } from '@mui/icons-material';
-import { Boton, Header } from '../comun/Main';
 import './styles.css';
 import axios from 'axios';
 import { useLocation, useSearch } from "wouter";
@@ -12,13 +11,16 @@ import { jwtDecode } from "jwt-decode";
 import useEnv from '../../useEnv';
 
 export default function Login({notificar, checkLogged}){
+  const {ENV_LOADED, BASE_URL} = useEnv();
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
   const [location, navigate] = useLocation();
-  const {ENV_LOADED, BASE_URL} = useEnv();
+  const [disabled, setDisabled] = useState(true);
 
-  const login = () =>{
+  const login = (e) =>{
+    e.preventDefault();
+    setDisabled(true);
     if(user != "" && pass != ""){
       notificar({msg:"Ingresando.."});
       const url =  BASE_URL + "usuarios/login";
@@ -33,32 +35,35 @@ export default function Login({notificar, checkLogged}){
         } 
         else {
           notificar({msg:resp.data.error, type: "error"});
+          setDisabled(false);
         }
       })
       .catch((error)=>{
-        notificar({msg:resp.data.error, type: "error"});
+        notificar({msg:error.message, type: "error"});
+        setDisabled(false);
       })
     }else{
       notificar({msg:"Complete todos los campos", type: "error"});
+      setDisabled(false);
     }
   }
 
   useEffect(() => {
     if (!ENV_LOADED) return;
+    setDisabled(false);
   },[ENV_LOADED])
 
   return(
     <div className='Login LoginContainer'>
+      <form className="Formulario" action="#" onSubmit={login}>
       <h2>VALLECITO GESTOR</h2>
-      <form className='Formulario' action="#" onSubmit={login}>
-        <h3>Inicie sesión</h3>
-        <hr width="80%"/>
         <TextField 
           className="Input"
           style={{margin: '10px 0', width:'100%'}}  
           label="Usuario"
           placeholder="Usuario"
-          value={user}
+                disabled={disabled} 
+                value={user}
           required
           onChange={(e) => setUser(e.target.value)}
           InputProps={{
@@ -71,6 +76,7 @@ export default function Login({notificar, checkLogged}){
           label="Contraseña"
           placeholder="Contraseña"
           type={showPassword ? "text" : "password"}
+          disabled={disabled} 
           value={pass}
           required
           onChange={(e) => setPass(e.target.value)}
@@ -86,11 +92,12 @@ export default function Login({notificar, checkLogged}){
             )
           }}
         />
-        <Boton
-          type="submit" className="Boton" variant="contained" 
-          onClick={(e) => login(e)}
-          color="#A3D0D0"
-        >Ingresar</Boton>
+        <Button
+        type="submit"
+          className="Boton" variant="contained" 
+          disabled={disabled}
+          onClick={(e)=>login(e)}
+        >Ingresar</Button>
       </form>
     </div>
   )

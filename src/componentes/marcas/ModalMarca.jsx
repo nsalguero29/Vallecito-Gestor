@@ -3,9 +3,19 @@ import {
     Button,
     TextField
   } from '@mui/material';
+import { useEffect, useState } from 'react';
 
-export default function ModalMarca ({ 
-  guardarMarca, setNombreMarca, salir, nombreMarca, titulo}){
+export default function ModalMarca ({ guardarMarca, salir, titulo,
+  disabled, datos, editar}){
+    
+    const [nombreMarca, setNombreMarca] = useState("");
+    
+    useEffect(()=>{
+      if(editar){ 
+        setNombreMarca(datos.marca)
+      }
+    }, [])
+
     return (
         <BaseModal titulo={titulo} salir={()=>salir()}>
           <div className='Formulario' style={{display:'flex', flex:1, padding:5, placeItems:'center'}}>
@@ -15,12 +25,15 @@ export default function ModalMarca ({
                 className='Dato'
                 label="Marca"
                 variant="outlined"
+                disabled={disabled}
                 value={nombreMarca}
                 onChange={(e) => setNombreMarca(e.target.value)}
               />
             </div>
             <div className="Linea" style={{display:'flex', placeContent:'center'}}>
-              <Button variant="contained" className='Boton' onClick={() => { salir(); guardarMarca(); }}>Guardar Nueva Marca</Button>
+              <Button variant="contained" className='Boton' 
+              disabled={disabled}
+              onClick={() => { guardarMarca(nombreMarca, editar, datos.id); }}>Guardar Marca</Button>
             </div>
           </div>
         </BaseModal>

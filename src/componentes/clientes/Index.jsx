@@ -4,7 +4,7 @@ import {
 	Button, TextField
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Accion, Header, Paginador} from '../comun/Main';
+import {Accion, GenerarMessage, Paginador} from '../comun/Main';
 import ModalCliente from './ModalCliente';
 import { getJWT } from '../comun/Funciones';
 import { useLocation } from 'wouter';
@@ -12,11 +12,13 @@ import useEnv from '../../useEnv';
 
 let controller = new AbortController();
 let oldController;
+let datos = [];
 dayjs.locale('es');
 
-export default function Index ({notificar, checkLogged}){
+export default function Index ({notificar}){
   const {ENV_LOADED, BASE_URL} = useEnv();
   const [location, navigate] = useLocation();
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => { 
     if (!ENV_LOADED) return;
@@ -25,6 +27,7 @@ export default function Index ({notificar, checkLogged}){
 
   const [clientes, setClientes] = useState([]);
   const [modalNuevoCliente, setModalNuevoCliente] = useState(false);
+  const [modalEditarCliente, setModalEditarCliente] = useState(false);
 
   const [expandir, setExpandir] = useState();
   const [expandir2, setExpandir2] = useState();
@@ -73,35 +76,72 @@ export default function Index ({notificar, checkLogged}){
         if(resp.data.status === "ok"){        
           setClientes(resp.data.clientes);
           const paginasTotales = Math.ceil(resp.data.total / limite);
-          setPaginasTotales(paginasTotales);        
+          setPaginasTotales(paginasTotales);  
+          setDisabled(false);      
         }
       })
     })
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
 
-  const guardarCliente= (datosCliente) => {
-    if (window.confirm("¿Esta seguro que desea registrar un cliente?")){
-      const url = BASE_URL + 'clientes/'
-      getJWT()
-      .then(({jwt})=>{        
-        const config = {headers:{authorization:jwt}};
-        console.log({datosCliente});
+  const guardarCliente= (datosCliente, editar = false) => {
+    let message = GenerarMessage(("¿Esta seguro que desea "+ (editar?"editar":"guardar") +" este cliente?"), ()=>saveCliente(datosCliente, editar), ()=>{setDisabled(false)}, "Guardar");
+    notificar({
+      msg: message, 
+      type: "info", 
+      autoClose: false,  
+      closeOnClick: false});    
+  }
+
+  const saveCliente = (datosCliente, editar) =>{
+    const url = BASE_URL + 'clientes/'
+    getJWT()
+    .then(({jwt})=>{        
+      const config = {headers:{authorization:jwt}};
+      if(!editar){
         axios.post(url, datosCliente, config)
         .then((res) => {
-          console.log(res.data);
           if (res.data.status === "ok"){
-            alert("Guardado");
-            cargarClientes();
+            notificar({ 
+              msg: "Proveedor Guardado.",
+              type: "success",
+              callback: () => {
+                cargarClientes();
+                setModalEditarCliente(false);
+                setModalNuevoCliente(false);
+              }
+            });
           } else {
-            alert("Error")
+            notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
           }
         })
-      })
-      .catch((error) => {
-        alert(error)
-      })
-    }
+      }else{
+        axios.put(url, datosCliente, config)
+        .then((res) => {
+          if (res.data.status === "ok"){
+            notificar({ 
+              msg: "Proveedor Editado.",
+              type: "success",
+              callback: () => {
+                cargarClientes();
+                setModalEditarCliente(false);
+                setModalNuevoCliente(false);
+              }
+            });
+          } else {
+            notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
+          }
+        })
+      }
+    })
+    .catch((error) => {
+      alert(error)
+    })
+  }
+
+  const editar = (cliente) =>{
+    datos = cliente;
+    setModalEditarCliente(true);
   }
 
   return(
@@ -114,6 +154,17 @@ export default function Index ({notificar, checkLogged}){
                 titulo="Nuevo Cliente"
                 guardarCliente={(datosCliente)=>guardarCliente(datosCliente)}
                 salir={() => setModalNuevoCliente(false)}
+              />
+            }
+            {modalEditarCliente && 
+              <ModalCliente
+                titulo="Nuevo Cliente"
+                guardarCliente={(datosCliente, editar)=>guardarCliente(datosCliente, editar)}
+                salir={() => setModalEditarCliente(false)}
+                datos={datos}
+                editar={true}
+                disabled={disabled} 
+                setDisabled={setDisabled}
               />
             }
             <div style={{display:'flex', flex:1, flexDirection:'column'}}>
@@ -168,7 +219,13 @@ export default function Index ({notificar, checkLogged}){
                             </div>
                           </div>
                           <div className="Acciones">
-                            
+                            <Accion
+                              icono="edit"
+                              ayuda="Editar"
+                              backgroundColor="#00a5e5"
+                              disabled={disabled}
+                              onClick={() => editar(cliente)}
+                            />
                           </div>
                         </div>
                         {expandir === index &&

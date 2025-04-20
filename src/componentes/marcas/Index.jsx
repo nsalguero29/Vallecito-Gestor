@@ -8,15 +8,17 @@ import { getJWT } from '../comun/Funciones';
 import { useLocation } from 'wouter';
 import useEnv from '../../useEnv';
 
-import {Accion, Header, Paginador} from '../comun/Main';
+import {Accion, GenerarMessage, Paginador} from '../comun/Main';
 import ModalMarca from './ModalMarca';
 let controller = new AbortController();
 let oldController;
+let datos = [];
 dayjs.locale('es');
 
 export default function Index ({notificar}){
   const {ENV_LOADED, BASE_URL} = useEnv();
   const [location, navigate] = useLocation();
+  const [disabled, setDisabled] = useState(true);
 
   useEffect(() => { 
     if (!ENV_LOADED) return;
@@ -27,6 +29,7 @@ export default function Index ({notificar}){
   const [nombreMarca, setNombreMarca] = useState("");
   const [actualizarLista, setActualizarLista] = useState(true);
   const [modalNuevaMarca, setModalNuevaMarca] = useState(false);
+  const [modalEditarMarca, setModalEditarMarca] = useState(false);
 
   const [expandir, setExpandir] = useState();
 
@@ -75,35 +78,78 @@ export default function Index ({notificar}){
           setMarcas(resp.data.marcas);
           const paginasTotales = Math.ceil(resp.data.total / limite);
           setPaginasTotales(paginasTotales);
+          setDisabled(false);
         }
       })
     })
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
 
-  const guardarMarca= () => {
-    if (window.confirm("¿Esta seguro que desea guardar una nueva marca?")){
-      const url = BASE_URL + 'marcas/'
-      getJWT()
-      .then(({jwt})=>{
-        
+  const guardarMarca= (marca, editar = false, id = null) => {
+    setDisabled(false);
+    let message = GenerarMessage(("¿Esta seguro que desea "+ (editar?"editar":"guardar") +" esta marca?"), ()=>saveMarca(marca, editar, id), ()=>{setDisabled(false)}, "Guardar");
+    notificar({
+      msg: message, 
+      type: "info", 
+      autoClose: false,  
+      closeOnClick: false
+    });    
+  }
+
+  const saveMarca = (marca, editar, id) =>{
+    const url = BASE_URL + 'marcas/'
+    getJWT()
+    .then(({jwt})=>{
+      if(!editar){
         const config = {headers:{authorization:jwt}};
-        const nuevaMarca = {"marca": nombreMarca};
-        console.log(nuevaMarca);
-        axios.post(url, nuevaMarca, config)
+        axios.post(url, {marca}, config)
         .then((res) => {
           if (res.data.status === "ok"){
-            alert("Guardado");
-            cargarMarcas();
+            notificar({ 
+              msg: "Marca Guardada.",
+              type: "success",
+              callback: () => {
+                cargarMarcas();
+                setModalNuevaMarca(false);
+                setModalEditarMarca(false);
+              }
+            });
           } else {
-            alert("Error")
+            notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
           }
         })
-      })
-      .catch((error) => {
-        alert(error)
-      })
-    }
+      }else{
+        const config = {
+          headers:{
+            authorization:jwt
+          }
+        };
+        axios.put(url, {id, marca}, config)
+        .then((res) => {
+          if (res.data.status === "ok"){
+            notificar({ 
+              msg: "Marca Editada.",
+              type: "success",
+              callback: () => {
+                cargarMarcas();
+                setModalNuevaMarca(false);
+                setModalEditarMarca(false);
+              }
+            });
+          } else {
+            notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
+          }
+        })
+      }
+    })
+    .catch((error) => {
+      notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
+    })
+  }
+
+  const editar = (marca) =>{
+    datos = marca;
+    setModalEditarMarca(true);
   }
 
   return(
@@ -114,10 +160,21 @@ export default function Index ({notificar}){
             {modalNuevaMarca && 
               <ModalMarca
                 titulo="Nueva Marca"
-                nombreMarca={nombreMarca}
-                setNombreMarca= {(nombreMarca)=>setNombreMarca(nombreMarca)}
-                guardarMarca={()=>guardarMarca()}
+                guardarMarca={(marca)=>guardarMarca(marca)}
                 salir={() => setModalNuevaMarca(false)}
+                disabled={disabled} 
+                setDisabled={setDisabled}
+              />
+            }
+            {modalEditarMarca && 
+              <ModalMarca
+                titulo="Nueva Marca"
+                guardarMarca={(marca, editar, id)=>guardarMarca(marca, editar, id)}
+                salir={() => setModalNuevaMarca(false)}
+                datos={datos}
+                editar={true}
+                disabled={disabled} 
+                setDisabled={setDisabled}
               />
             }
             <div style={{display:'flex', flex:1, flexDirection:'column'}}>
@@ -169,7 +226,14 @@ export default function Index ({notificar}){
                               </div>
                             </div>
                           </div>  
-                          <div className="Acciones">                        
+                          <div className="Acciones">   
+                            <Accion
+                              icono="edit"
+                              ayuda="Editar"
+                              backgroundColor="#00a5e5"
+                              disabled={disabled}
+                              onClick={() => editar(marca)}
+                            />                     
                           </div>
                         </div>                
                         {expandir === index &&
