@@ -8,16 +8,18 @@ import { getJWT } from '../comun/Funciones';
 import { useLocation } from 'wouter';
 import useEnv from '../../useEnv';
 
-import {Accion, Paginador} from '../comun/Main';
+import {Accion, GenerarMessage, Paginador} from '../comun/Main';
 import ModalTipoProducto from './ModalTipoProducto';
 
 let controller = new AbortController();
 let oldController;
+let datos = [];
 dayjs.locale('es');
 
 export default function Index ({notificar}){
   const {ENV_LOADED, BASE_URL} = useEnv();
   const [location, navigate] = useLocation();
+  const [disabled, setDisabled] = useState(true);
 
   useEffect(() => { 
     if (!ENV_LOADED) return;
@@ -28,6 +30,7 @@ export default function Index ({notificar}){
   const [tipo, setTipo] = useState("");
   const [actualizarLista, setActualizarLista] = useState(true);
   const [modalNuevoTipoProducto, setModalNuevoTipoProducto] = useState(false);
+  const [modalEditarTipoProducto, setModalEditarTipoProducto] = useState(false);
 
   const [expandir, setExpandir] = useState();
 
@@ -76,33 +79,75 @@ export default function Index ({notificar}){
           setTiposProducto(resp.data.tiposProducto);
           const paginasTotales = Math.ceil(resp.data.total / limite);
           setPaginasTotales(paginasTotales);
+          setDisabled(false);
         }
       })
     })
     .catch((error)=>{if(!axios.isCancel) alert(error);})
   }
 
-  const guardarTipo= () => {
-    if (window.confirm("¿Esta seguro que desea guardar una nueva marca?")){
-      const url = BASE_URL + 'tiposProductos/'
-      getJWT()
-      .then(({jwt})=>{        
-        const config = {headers:{authorization:jwt}};
+  const guardarTipo = (tipo, editar = false, id = null) => {
+    setDisabled(true);
+    let message = GenerarMessage(("¿Esta seguro que desea "+ (editar?"editar":"guardar") +" este Tipo de Producto?"), ()=>saveTipo(tipo, editar, id), ()=>{setDisabled(false)}, "Guardar");
+    notificar({
+      msg: message, 
+      type: "info", 
+      autoClose: false,  
+      closeOnClick: false
+    }); 
+  }
+
+  const saveTipo = (tipo, editar, id) =>{
+    const url = BASE_URL + 'tiposProductos/'
+    getJWT()
+    .then(({jwt})=>{
+      const config = {headers:{authorization:jwt}};
+      if(!editar){
         const nuevoTipo = {"tipoProducto": tipo};
         axios.post(url, nuevoTipo, config)
         .then((res) => {
           if (res.data.status === "ok"){
-            alert("Guardado");
-            cargarTipos();
+            notificar({ 
+              msg: "Tipo de Prodcuto Guardado.",
+              type: "success",
+              callback: () => {  
+                cargarTipos();
+                setModalNuevoTipoProducto(false);
+                setModalEditarTipoProducto(false);
+              }
+            });
           } else {
-            alert("Error")
+            notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
           }
         })
-      })
-      .catch((error) => {
-        alert(error)
-      })
-    }
+      }else{
+        axios.put(url, {id, "tipoProducto": tipo}, config)
+        .then((res) => {
+          console.log(res);
+          if (res.data.status === "ok"){
+            notificar({ 
+              msg: "Tipo de Prodcuto Editado.",
+              type: "success",
+              callback: () => {
+                cargarTipos();
+                setModalNuevoTipoProducto(false);
+                setModalEditarTipoProducto(false);
+              }
+            });
+          } else {
+            notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
+          }
+        })
+      }  
+    })
+    .catch((error) => {
+      notificar({ msg: error, type: "error", callback: () => setDisabled(false) });   
+    })
+  }
+
+  const editar = (tipo) =>{
+    datos = tipo;
+    setModalEditarTipoProducto(true);
   }
 
   return(
@@ -113,10 +158,19 @@ export default function Index ({notificar}){
             {modalNuevoTipoProducto && 
               <ModalTipoProducto
                 titulo="Nuevo Tipo de Producto"
-                tipo={tipo}
-                setTipo= {(tipo)=>setTipo(tipo)}
-                guardarTipo={()=>guardarTipo()}
+                guardarTipo={(tipo)=>guardarTipo(tipo)}
                 salir={() => setModalNuevoTipoProducto(false)}
+                disabled={disabled} 
+              />
+            }
+            {modalEditarTipoProducto && 
+              <ModalTipoProducto
+                titulo="Editar Tipo de Producto"
+                guardarTipo={(tipo, editar, id)=>guardarTipo(tipo, editar, id)}
+                salir={() => setModalEditarTipoProducto(false)}
+                datos={datos}
+                editar={true}
+                disabled={disabled} 
               />
             }
             <div style={{display:'flex', flex:1, flexDirection:'column'}}>
@@ -155,7 +209,14 @@ export default function Index ({notificar}){
                               </div>                          
                             </div>
                           </div>  
-                          <div className="Acciones">                        
+                          <div className="Acciones">
+                            <Accion
+                              icono="edit"
+                              ayuda="Editar"
+                              backgroundColor="#00a5e5"
+                              disabled={disabled}
+                              onClick={() => editar(tipo)}
+                            />                        
                           </div>
                         </div>       
                       </div>

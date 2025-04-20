@@ -26,8 +26,6 @@ export default function Index ({notificar}){
   }, [ENV_LOADED])
 
   const [marcas, setMarcas] = useState([]);
-  const [nombreMarca, setNombreMarca] = useState("");
-  const [actualizarLista, setActualizarLista] = useState(true);
   const [modalNuevaMarca, setModalNuevaMarca] = useState(false);
   const [modalEditarMarca, setModalEditarMarca] = useState(false);
 
@@ -163,7 +161,6 @@ export default function Index ({notificar}){
                 guardarMarca={(marca)=>guardarMarca(marca)}
                 salir={() => setModalNuevaMarca(false)}
                 disabled={disabled} 
-                setDisabled={setDisabled}
               />
             }
             {modalEditarMarca && 
@@ -174,7 +171,6 @@ export default function Index ({notificar}){
                 datos={datos}
                 editar={true}
                 disabled={disabled} 
-                setDisabled={setDisabled}
               />
             }
             <div style={{display:'flex', flex:1, flexDirection:'column'}}>

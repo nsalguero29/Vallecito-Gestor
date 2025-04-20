@@ -7,11 +7,13 @@ import { useEffect, useState } from 'react';
 
 export default function ModalMarca ({ guardarMarca, salir, titulo,
   disabled, datos, editar}){
-    
+
+    const [id, setId] = useState(null);
     const [nombreMarca, setNombreMarca] = useState("");
     
     useEffect(()=>{
       if(editar){ 
+        setId(datos.id);
         setNombreMarca(datos.marca)
       }
     }, [])
@@ -33,7 +35,7 @@ export default function ModalMarca ({ guardarMarca, salir, titulo,
             <div className="Linea" style={{display:'flex', placeContent:'center'}}>
               <Button variant="contained" className='Boton' 
               disabled={disabled}
-              onClick={() => { guardarMarca(nombreMarca, editar, datos.id); }}>Guardar Marca</Button>
+              onClick={() => { guardarMarca(nombreMarca, editar, id); }}>Guardar Marca</Button>
             </div>
           </div>
         </BaseModal>
