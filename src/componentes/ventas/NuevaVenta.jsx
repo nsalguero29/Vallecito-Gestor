@@ -84,16 +84,13 @@ export default function NuevaVenta ({BASE_URL, checkLogged}){
   const [valorDetalles, setValorDetalles] = useState(0);
 
   useEffect(()=>{
-    checkLogged()
+    cargarProductos()
     .then(()=>{
-      cargarProductos()
+      cargarClientes()
       .then(()=>{
-        cargarClientes()
-        .then(()=>{
-          setDatoVenta("fechaVenta", dayjs());
-          setDatoVenta("cliente", null);
-          setCargando(false)
-        })
+        setDatoVenta("fechaVenta", dayjs());
+        setDatoVenta("cliente", null);
+        setCargando(false)
       })
     })
     .catch((error)=>{

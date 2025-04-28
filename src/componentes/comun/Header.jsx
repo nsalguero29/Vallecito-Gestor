@@ -9,7 +9,7 @@ const MENU = [
   {ruta:"/clientes", titulo:"CLIENTES"},
   //{ruta:"/bicicletas", titulo:"BICICLETAS"},
   //{ruta:"/arreglos", titulo:"ARREGLOS"},
-  {ruta:"/ventas", titulo:"VENTAS"},
+  //{ruta:"/ventas", titulo:"VENTAS"},
   {ruta:"/marcas", titulo:"MARCAS"},
   {ruta:"/proveedores", titulo:"PROVEEDORES"},
   {ruta:"/productos", titulo:"PRODUCTOS"},

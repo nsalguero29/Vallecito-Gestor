@@ -16,7 +16,7 @@ export default function Index ({}){
           <Tarjeta url="/clientes" titulo="Clientes" icono=""/>
           {/*<Tarjeta url="/bicicletas" titulo="Bicicletas" icono=""/>
           <Tarjeta url="/arreglos" titulo="Arreglos" icono=""/>*/}
-          <Tarjeta url="/ventas" titulo="Ventas" icono=""/>
+          {/* <Tarjeta url="/ventas" titulo="Ventas" icono=""/> */}
           <Tarjeta url="/productos" titulo="Productos" icono=""/>
           <Tarjeta url="/proveedores" titulo="Proveedores" icono=""/>
           <Tarjeta url="/marcas" titulo="Marcas" icono=""/>
